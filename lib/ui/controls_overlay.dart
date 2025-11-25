@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:vidinfra_player/controller/vidinfra_player_controller.dart';
 import 'package:vidinfra_player/ui/bottom_controls_overlay.dart';
 import 'package:vidinfra_player/ui/components/animated_visibility.dart';
-import 'package:vidinfra_player/ui/components/assets.dart';
+import 'package:vidinfra_player/ui/play_pause_button.dart';
 import 'package:vidinfra_player/ui/top_controls_overlay.dart';
-
-import '../controller/models.dart';
 
 class ControlsOverlay extends StatelessWidget {
   final VidinfraPlayerController controller;
@@ -36,17 +34,7 @@ class ControlsOverlay extends StatelessWidget {
               visible: visible,
               child: child!,
             ),
-            child: IconButton(
-              onPressed: () {
-                controller.play(
-                  Media(
-                    url:
-                        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-                  ),
-                );
-              },
-              icon: VidinfraIcons.play(),
-            ),
+            child: PlayPauseButton(controller: controller, size: 42),
           ),
         ),
         Align(

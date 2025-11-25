@@ -12,7 +12,8 @@ dependencies:
     sdk: flutter
 
   kvideo:
-    git: git@github.com:khaled-0/kVideo.git
+    path: ../kVideo
+
   crypto: ^3.0.7
   background_downloader: ^9.4.0
 

@@ -1,26 +1,30 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:kvideo/kvideo.dart' as k;
 import 'package:vidinfra_player/authentication/aes_auth.dart';
 
 import 'models.dart';
 
-class VidinfraPlayerController with AESAuthSetup {
+part 'ui_controller_mixin.dart';
+
+class VidinfraPlayerController with AESAuthMixin, UiControllerMixin {
   /// Internal implementation, Not to be used outside of the package
   final kController = k.PlayerController();
   final Completer _init = Completer();
 
+  /// Internal implementation, Not to be used outside of the package
+  @override
+  k.PlayerState get kState => kController.state;
+
   VidinfraPlayerController() {
     kController.initialize().then(_init.complete);
-    kController.state.status.addListener(_statusUpdater);
+
+    kState.status.addListener(_statusUpdater);
+
+    controlsVisible.addListener(autoHideControls);
+    if (controlsVisible.value) autoHideControls();
   }
-
-  /// This will be used and toggled by ui
-  final ValueNotifier<bool> controlsVisible = ValueNotifier(true);
-
-  /// Whether to show loading indicator
-  final ValueNotifier<bool> loading = ValueNotifier(false);
 
   Future<void> play(Media media) async {
     if (!_init.isCompleted) await _init.future;
@@ -33,14 +37,13 @@ class VidinfraPlayerController with AESAuthSetup {
     );
   }
 
-  void _statusUpdater() {
-    final status = kController.state.status.value;
-    loading.value = status == k.PlaybackStatus.preparing;
-  }
-
   void dispose() {
     if (!_init.isCompleted) _init.completeError("Disposed before init");
-    kController.state.status.removeListener(_statusUpdater);
+
+    kState.status.removeListener(_statusUpdater);
+    controlsVisible.removeListener(autoHideControls);
+
     controlsVisible.dispose();
+    kController.dispose();
   }
 }

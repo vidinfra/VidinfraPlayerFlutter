@@ -142,11 +142,9 @@ packages:
   kvideo:
     dependency: transitive
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: ce43d457172b89cb488edd7f994d792bae5d48e7
-      url: "git@github.com:khaled-0/kVideo.git"
-    source: git
+      path: "../../kVideo"
+      relative: true
+    source: path
     version: "0.0.1"
   leak_tracker:
     dependency: transitive

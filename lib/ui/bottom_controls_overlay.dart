@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:vidinfra_player/controller/vidinfra_player_controller.dart';
 import 'package:vidinfra_player/ui/components/assets.dart';
@@ -10,7 +12,7 @@ class BottomControlsOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
@@ -20,7 +22,19 @@ class BottomControlsOverlay extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          TextButton(onPressed: () {}, child: Text("BYEE")),
+          ValueListenableBuilder(
+            valueListenable: controller.kState.progress,
+            builder: (context, value, child) {
+              final duration = controller.kState.duration.value.inSeconds;
+              print(controller.kState.duration.value);
+              return Slider(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                max: duration.toDouble(),
+                value: math.min(value.inSeconds, duration).toDouble(),
+                onChanged: (value) {},
+              );
+            },
+          ),
           Row(
             children: [
               IconButton(

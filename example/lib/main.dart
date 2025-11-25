@@ -9,6 +9,9 @@ void main() {
       home: const HomePage(title: 'Vidinfra Player Flutter SDK'),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFF00FFDD)),
+        inputDecorationTheme: InputDecorationTheme(
+          border: OutlineInputBorder(),
+        ),
       ),
     ),
   );
@@ -29,21 +32,30 @@ class _HomePageState extends State<HomePage> {
   String secret = "";
 
   void playVideo() {
-    controller.setupAESAuth(secret: secret);
-    controller.play(Media(url: url));
+    try {
+      if (url.isEmpty) throw ArgumentError("Url must be provided");
+
+      controller.setupAESAuth(secret: secret);
+      controller.play(Media(url: url));
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
+    }
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Column(
-        children: [
-          VidinfraPlayerView(controller: controller, aspectRatio: 16 / 9),
-          ListView(
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(
+      backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      title: Text(widget.title),
+    ),
+    body: Column(
+      children: [
+        VidinfraPlayerView(controller: controller, aspectRatio: 16 / 9),
+        Expanded(
+          child: ListView(
+            padding: EdgeInsetsGeometry.symmetric(horizontal: 12, vertical: 8),
             children: [
               TextFormField(
                 initialValue: url,
@@ -65,10 +77,12 @@ class _HomePageState extends State<HomePage> {
                 valueListenable: controller.kController.state.error,
                 builder: (context, value, child) => Text(value ?? ""),
               ),
-            ],
+            ].map((e) => Padding(padding: spacing, child: e)).toList(),
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+
+  final spacing = EdgeInsets.symmetric(vertical: 8);
 }

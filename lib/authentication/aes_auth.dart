@@ -44,7 +44,7 @@ class AESAuth {
     AESAuthOptions? options,
   }) {
     if (secret.isEmpty) {
-      throw ArgumentError('generateAuthHeaders requires a non-empty secret');
+      throw ArgumentError('AES Auth requires a non-empty secret');
     }
 
     final unixTimestamp =
@@ -75,7 +75,7 @@ class AESAuth {
   }
 }
 
-mixin AESAuthSetup {
+mixin AESAuthMixin {
   /// To be automatically passed in as Media headers
   Map<String, String> aesAuthHeaders = {};
 
