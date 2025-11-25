@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vidinfra_player/extensions.dart';
 import 'package:vidinfra_player/ui/controls_overlay.dart';
 import 'package:vidinfra_player/vidinfra_player.dart';
 

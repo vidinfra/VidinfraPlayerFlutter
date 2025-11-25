@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vidinfra_player/controller/models.dart';
 import 'package:vidinfra_player/controller/vidinfra_player_controller.dart';
 import 'package:vidinfra_player/ui/vidinfra_player_view.dart';
 
@@ -24,6 +25,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final controller = VidinfraPlayerController();
+  String url = "";
+  String secret = "";
+
+  void playVideo() {
+    controller.setupAESAuth(secret: secret);
+    controller.play(Media(url: url));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +43,30 @@ class _HomePageState extends State<HomePage> {
       body: Column(
         children: [
           VidinfraPlayerView(controller: controller, aspectRatio: 16 / 9),
+          ListView(
+            children: [
+              TextFormField(
+                initialValue: url,
+                decoration: InputDecoration(labelText: "Video URL"),
+                onChanged: (value) => url = value,
+              ),
+              TextFormField(
+                initialValue: secret,
+                decoration: InputDecoration(labelText: "Secret"),
+                onChanged: (value) => secret = value,
+              ),
+              Wrap(
+                children: [
+                  ElevatedButton(onPressed: playVideo, child: Text("Play")),
+                ],
+              ),
+
+              ValueListenableBuilder(
+                valueListenable: controller.kController.state.error,
+                builder: (context, value, child) => Text(value ?? ""),
+              ),
+            ],
+          ),
         ],
       ),
     );

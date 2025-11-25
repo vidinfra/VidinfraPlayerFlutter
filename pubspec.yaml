@@ -13,6 +13,8 @@ dependencies:
 
   kvideo:
     git: git@github.com:khaled-0/kVideo.git
+  crypto: ^3.0.7
+  background_downloader: ^9.4.0
 
   vector_graphics: ^1.1.19
   vector_graphics_compiler: ^1.1.19
@@ -37,7 +39,7 @@ flutter:
     - path: assets/icons/
       transformers:
         - package: vector_graphics_compiler
-  #
+  #c
   # For details regarding assets in packages, see
   # https://flutter.dev/to/asset-from-package
   #
