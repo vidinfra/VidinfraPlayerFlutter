@@ -28,16 +28,6 @@ class ControlsOverlay extends StatelessWidget {
           ),
         ),
         Align(
-          child: ValueListenableBuilder(
-            valueListenable: controller.controlsVisible,
-            builder: (_, visible, child) => AnimatedVisibility(
-              visible: visible,
-              child: child!,
-            ),
-            child: PlayPauseButton(controller: controller, size: 42),
-          ),
-        ),
-        Align(
           alignment: Alignment.bottomCenter,
           child: ValueListenableBuilder(
             valueListenable: controller.controlsVisible,
@@ -47,6 +37,16 @@ class ControlsOverlay extends StatelessWidget {
               child: child!,
             ),
             child: BottomControlsOverlay(controller: controller),
+          ),
+        ),
+        Align(
+          child: ValueListenableBuilder(
+            valueListenable: controller.controlsVisible,
+            builder: (_, visible, child) => AnimatedVisibility(
+              visible: visible,
+              child: child!,
+            ),
+            child: PlayPauseButton(controller: controller, size: 42),
           ),
         ),
       ],

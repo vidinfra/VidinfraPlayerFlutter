@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:vidinfra_player/controller/models.dart';
+import 'package:vidinfra_player/controller/vidinfra_downloader.dart';
 import 'package:vidinfra_player/controller/vidinfra_player_controller.dart';
 import 'package:vidinfra_player/ui/vidinfra_player_view.dart';
 
@@ -9,6 +11,11 @@ void main() {
       home: const HomePage(title: 'Vidinfra Player Flutter SDK'),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFF00FFDD)),
+        iconButtonTheme: IconButtonThemeData(
+          style: IconButton.styleFrom(
+            highlightColor: Color(0xFF00FFDD).withAlpha(69),
+          ),
+        ),
         inputDecorationTheme: InputDecorationTheme(
           border: OutlineInputBorder(),
         ),
@@ -26,10 +33,16 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> implements DownloadEventListener {
   final controller = VidinfraPlayerController();
-  String url = "";
-  String secret = "";
+  late final downloader = VidinfraDownloader(listener: this);
+
+  String url = kDebugMode
+      ? "https://jaemlu16jl.tenbytecdn.com/939cb5d4-0cde-4d7b-ad61-55c78e8a60a1/playlist.m3u8"
+      : "";
+  String secret = kDebugMode
+      ? "3519307ccba541099e5167b87c60ae50565148413c2af5ef247248fbade90d8f"
+      : "";
 
   void playVideo() {
     try {
@@ -38,6 +51,20 @@ class _HomePageState extends State<HomePage> {
       controller.setupAESAuth(secret: secret);
       controller.play(Media(url: url));
     } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
+    }
+  }
+
+  Future<void> downloadVideo() async {
+    try {
+      if (url.isEmpty) throw ArgumentError("Url must be provided");
+      downloader.setupAESAuth(secret: secret);
+
+      await downloader.startDownloading(Media(url: url));
+    } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(e.toString())));
@@ -68,14 +95,69 @@ class _HomePageState extends State<HomePage> {
                 onChanged: (value) => secret = value,
               ),
               Wrap(
+                spacing: 8,
+                runSpacing: 8,
                 children: [
                   ElevatedButton(onPressed: playVideo, child: Text("Play")),
+                  ElevatedButton(
+                    onPressed: downloadVideo,
+                    child: Text("Download"),
+                  ),
                 ],
               ),
 
               ValueListenableBuilder(
                 valueListenable: controller.kController.state.error,
                 builder: (context, value, child) => Text(value ?? ""),
+              ),
+
+              Divider(),
+
+              FutureBuilder(
+                future: downloader.getAllDownloadIds(),
+                builder: (context, snapshot) {
+                  final ids = snapshot.data ?? [];
+                  return Column(
+                    spacing: 8,
+                    children: [
+                      if (ids.isNotEmpty)
+                        TextButton(
+                          onPressed: () => downloader.removeAll(),
+                          child: Text("Remove All"),
+                        ),
+                      for (final id in ids)
+                        FutureBuilder(
+                          future: downloader.getDownloadStatus(id),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) return SizedBox();
+                            final data = snapshot.requireData!;
+                            return Row(
+                              children: [
+                                Expanded(child: Text(data.encode().toString())),
+                                if (data.status == DownloadStatus.finished) ...{
+                                  IconButton(
+                                    onPressed: () {
+                                      controller.play(
+                                        Media(url: data.localUri!),
+                                      );
+                                    },
+                                    icon: Icon(Icons.play_arrow),
+                                  ),
+                                },
+
+                                IconButton(
+                                  onPressed: () {
+                                    downloader.remove(data.id!);
+                                  },
+                                  icon: Icon(Icons.cancel),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                    ],
+                  );
+                },
               ),
             ].map((e) => Padding(padding: spacing, child: e)).toList(),
           ),
@@ -85,4 +167,26 @@ class _HomePageState extends State<HomePage> {
   );
 
   final spacing = EdgeInsets.symmetric(vertical: 8);
+
+  @override
+  void onCompletion(String id, String location) {
+    setState(() {});
+  }
+
+  @override
+  void onError(String id, String error) {
+    print("ERROR: $error");
+    setState(() {});
+  }
+
+  @override
+  void onProgress(String id, int progress) {
+    setState(() {});
+  }
+
+  @override
+  void onRemoved(String id) {
+    print("REMOVED: $id");
+    setState(() {});
+  }
 }

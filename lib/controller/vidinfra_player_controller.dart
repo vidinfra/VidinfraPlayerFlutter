@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:kvideo/kvideo.dart' as k;
+import 'package:kvideo/player_view.dart';
 import 'package:vidinfra_player/authentication/aes_auth.dart';
 
 import 'models.dart';
@@ -10,7 +11,10 @@ part 'ui_controller_mixin.dart';
 
 class VidinfraPlayerController with AESAuthMixin, UiControllerMixin {
   /// Internal implementation, Not to be used outside of the package
-  final kController = k.PlayerController();
+  late final kController = k.PlayerController(
+    androidViewMode: AndroidViewMode.hybrid,
+  );
+
   final Completer _init = Completer();
 
   /// Internal implementation, Not to be used outside of the package

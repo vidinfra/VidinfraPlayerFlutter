@@ -15,7 +15,7 @@ dependencies:
     path: ../kVideo
 
   crypto: ^3.0.7
-  background_downloader: ^9.4.0
+  http: ^1.6.0
 
   vector_graphics: ^1.1.19
   vector_graphics_compiler: ^1.1.19

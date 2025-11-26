@@ -21,12 +21,12 @@ class PlayPauseButton extends StatelessWidget {
       valueListenable: controller.kState.status,
       builder: (_, status, _) {
         final loading = status == k.PlaybackStatus.preparing;
-        final paused = status == k.PlaybackStatus.paused;
+        final playing = status == k.PlaybackStatus.playing;
         if (loading && !showWhileLoading) return const SizedBox();
         return AnimatedSwitcher(
           duration: Durations.short4,
           transitionBuilder: (c, s) => ScaleTransition(scale: s, child: c),
-          child: paused ? _resume() : _pause(),
+          child: playing ? _pause() : _resume(),
         );
       },
     );
