@@ -38,7 +38,8 @@ class _HomePageState extends State<HomePage> implements DownloadEventListener {
   late final downloader = VidinfraDownloader(listener: this);
 
   String url = kDebugMode
-      ? "https://jaemlu16jl.tenbytecdn.com/939cb5d4-0cde-4d7b-ad61-55c78e8a60a1/playlist.m3u8"
+      ? "https://jaemlu16jl.tenbytecdn.com/aa2952e7-289d-4183-9601-9c3b567c0ead/playlist.m3u8"
+      // ? "https://jaemlu16jl.tenbytecdn.com/939cb5d4-0cde-4d7b-ad61-55c78e8a60a1/playlist.m3u8"
       : "";
   String secret = kDebugMode
       ? "3519307ccba541099e5167b87c60ae50565148413c2af5ef247248fbade90d8f"
@@ -122,7 +123,9 @@ class _HomePageState extends State<HomePage> implements DownloadEventListener {
                     children: [
                       if (ids.isNotEmpty)
                         TextButton(
-                          onPressed: () => downloader.removeAll(),
+                          onPressed: () => downloader.removeAll().then(
+                            (value) => setState(() {}),
+                          ),
                           child: Text("Remove All"),
                         ),
                       for (final id in ids)
@@ -170,17 +173,19 @@ class _HomePageState extends State<HomePage> implements DownloadEventListener {
 
   @override
   void onCompletion(String id, String location) {
+    print("COMPLETE: $id $location");
     setState(() {});
   }
 
   @override
   void onError(String id, String error) {
-    print("ERROR: $error");
+    print("ERROR: $id $error");
     setState(() {});
   }
 
   @override
   void onProgress(String id, int progress) {
+    print("PROGRESS: $id $progress");
     setState(() {});
   }
 

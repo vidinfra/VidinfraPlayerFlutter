@@ -19,12 +19,14 @@ class VidinfraDownloader with AESAuthMixin {
       _downloader.setAndroidDataSourceHeaders(aesAuthHeaders);
     }
 
-    return _downloader.download(k.Media(url: media.url));
+    return _downloader.download(
+      k.Media(url: media.url, headers: {...aesAuthHeaders, ...media.headers}),
+    );
   }
 
-  void remove(String id) => _downloader.remove(id);
+  Future<void> remove(String id) => _downloader.remove(id);
 
-  void removeAll() => _downloader.removeAll();
+  Future<void> removeAll() => _downloader.removeAll();
 
   Future<List<String>> getAllDownloadIds() => _downloader.getAllDownloads();
 
