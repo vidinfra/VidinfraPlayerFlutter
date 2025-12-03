@@ -8,6 +8,7 @@ import 'package:vidinfra_player/ui/vidinfra_player_view.dart';
 void main() {
   runApp(
     MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: const HomePage(title: 'Vidinfra Player Flutter SDK'),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFF00FFDD)),
@@ -50,7 +51,7 @@ class _HomePageState extends State<HomePage> implements DownloadEventListener {
       if (url.isEmpty) throw ArgumentError("Url must be provided");
 
       controller.setupAESAuth(secret: secret);
-      controller.play(Media(url: url));
+      controller.play(Media(title: url, url: url));
     } catch (e) {
       ScaffoldMessenger.of(
         context,
@@ -63,7 +64,7 @@ class _HomePageState extends State<HomePage> implements DownloadEventListener {
       if (url.isEmpty) throw ArgumentError("Url must be provided");
       downloader.setupAESAuth(secret: secret);
 
-      await downloader.startDownloading(Media(url: url));
+      await downloader.startDownloading(Media(title: url, url: url));
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(
@@ -72,99 +73,127 @@ class _HomePageState extends State<HomePage> implements DownloadEventListener {
     }
   }
 
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(
+  PreferredSizeWidget? get appBar {
+    if (controller.inFullScreen) return null;
+    return AppBar(
       backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       title: Text(widget.title),
-    ),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    controller.addListener(() => setState(() {}));
+  }
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    appBar: appBar,
     body: Column(
       children: [
         VidinfraPlayerView(controller: controller, aspectRatio: 16 / 9),
-        Expanded(
-          child: ListView(
-            padding: EdgeInsetsGeometry.symmetric(horizontal: 12, vertical: 8),
-            children: [
-              TextFormField(
-                initialValue: url,
-                decoration: InputDecoration(labelText: "Video URL"),
-                onChanged: (value) => url = value,
+        if (!controller.inFullScreen)
+          Expanded(
+            child: ListView(
+              padding: EdgeInsetsGeometry.symmetric(
+                horizontal: 12,
+                vertical: 8,
               ),
-              TextFormField(
-                initialValue: secret,
-                decoration: InputDecoration(labelText: "Secret"),
-                onChanged: (value) => secret = value,
-              ),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  ElevatedButton(onPressed: playVideo, child: Text("Play")),
-                  ElevatedButton(
-                    onPressed: downloadVideo,
-                    child: Text("Download"),
-                  ),
-                ],
-              ),
+              children: [
+                TextFormField(
+                  initialValue: url,
+                  decoration: InputDecoration(labelText: "Video URL"),
+                  onChanged: (value) => url = value,
+                ),
+                TextFormField(
+                  initialValue: secret,
+                  decoration: InputDecoration(labelText: "Secret"),
+                  onChanged: (value) => secret = value,
+                ),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    ElevatedButton(onPressed: playVideo, child: Text("Play")),
+                    ElevatedButton(
+                      onPressed: downloadVideo,
+                      child: Text("Download"),
+                    ),
+                  ],
+                ),
 
-              ValueListenableBuilder(
-                valueListenable: controller.kController.state.error,
-                builder: (context, value, child) => Text(value ?? ""),
-              ),
+                ValueListenableBuilder(
+                  valueListenable: controller.kController.state.error,
+                  builder: (context, value, child) => Text(value ?? ""),
+                ),
 
-              Divider(),
+                Divider(),
 
-              FutureBuilder(
-                future: downloader.getAllDownloadIds(),
-                builder: (context, snapshot) {
-                  final ids = snapshot.data ?? [];
-                  return Column(
-                    spacing: 8,
-                    children: [
-                      if (ids.isNotEmpty)
-                        TextButton(
-                          onPressed: () => downloader.removeAll().then(
-                            (value) => setState(() {}),
+                FutureBuilder(
+                  future: downloader.getAllDownloadIds(),
+                  builder: (context, snapshot) {
+                    final ids = snapshot.data ?? [];
+                    return Column(
+                      spacing: 8,
+                      children: [
+                        if (ids.isNotEmpty)
+                          TextButton(
+                            onPressed: () => downloader.removeAll().then(
+                              (value) => setState(() {}),
+                            ),
+                            child: Text("Remove All"),
                           ),
-                          child: Text("Remove All"),
-                        ),
-                      for (final id in ids)
-                        FutureBuilder(
-                          future: downloader.getDownloadStatus(id),
-                          builder: (context, snapshot) {
-                            if (!snapshot.hasData) return SizedBox();
-                            final data = snapshot.requireData!;
-                            return Row(
-                              children: [
-                                Expanded(child: Text(data.encode().toString())),
-                                if (data.status == DownloadStatus.finished) ...{
+                        for (final id in ids)
+                          FutureBuilder(
+                            future: downloader.getDownloadStatus(id),
+                            builder: (context, snapshot) {
+                              if (!snapshot.hasData) return SizedBox();
+                              final data = snapshot.requireData!;
+                              return Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      children: [
+                                        LinearProgressIndicator(
+                                          value: (data.progress ?? 0) / 100,
+                                        ),
+                                        Text(data.encode().toString()),
+                                      ],
+                                    ),
+                                  ),
+                                  if (data.status ==
+                                      DownloadStatus.finished) ...{
+                                    IconButton(
+                                      onPressed: () {
+                                        controller.play(
+                                          Media(
+                                            title: data.localUri!,
+                                            url: data.localUri!,
+                                          ),
+                                        );
+                                      },
+                                      icon: Icon(Icons.play_arrow),
+                                    ),
+                                  },
+
                                   IconButton(
                                     onPressed: () {
-                                      controller.play(
-                                        Media(url: data.localUri!),
-                                      );
+                                      downloader.remove(data.id!);
                                     },
-                                    icon: Icon(Icons.play_arrow),
+                                    icon: Icon(Icons.cancel),
                                   ),
-                                },
-
-                                IconButton(
-                                  onPressed: () {
-                                    downloader.remove(data.id!);
-                                  },
-                                  icon: Icon(Icons.cancel),
-                                ),
-                              ],
-                            );
-                          },
-                        ),
-                    ],
-                  );
-                },
-              ),
-            ].map((e) => Padding(padding: spacing, child: e)).toList(),
+                                ],
+                              );
+                            },
+                          ),
+                      ],
+                    );
+                  },
+                ),
+              ].map((e) => Padding(padding: spacing, child: e)).toList(),
+            ),
           ),
-        ),
       ],
     ),
   );

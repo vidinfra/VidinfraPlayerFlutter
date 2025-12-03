@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vidinfra_player/controller/vidinfra_player_controller.dart';
 import 'package:vidinfra_player/ui/bottom_controls_overlay.dart';
 import 'package:vidinfra_player/ui/components/animated_visibility.dart';
@@ -6,17 +7,46 @@ import 'package:vidinfra_player/ui/play_pause_button.dart';
 import 'package:vidinfra_player/ui/top_controls_overlay.dart';
 
 class ControlsOverlay extends StatelessWidget {
-  final VidinfraPlayerController controller;
-
-  const ControlsOverlay({super.key, required this.controller});
+  const ControlsOverlay({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final controller = context.read<VidinfraPlayerController>();
+    final inFullScreen = context.select<VidinfraPlayerController, bool>(
+      (value) => value.inFullScreen,
+    );
+
     return Stack(
       fit: StackFit.expand,
       children: [
-        Align(
-          alignment: Alignment.topCenter,
+        Positioned.fill(
+          child: ValueListenableBuilder(
+            valueListenable: controller.controlsVisible,
+            builder: (_, visible, child) => AnimatedOpacity(
+              opacity: visible ? 1 : 0,
+              duration: Durations.medium1,
+              child: child,
+            ),
+            child: const DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0x99000000),
+                    Color(0x40000000),
+                    Color(0x40000000),
+                    Color(0x99000000),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+          top: inFullScreen ? 24 : 16,
+          left: inFullScreen ? 48 : 16,
+          right: inFullScreen ? 48 : 16,
           child: ValueListenableBuilder(
             valueListenable: controller.controlsVisible,
             builder: (_, visible, child) => AnimatedVisibility(
@@ -24,11 +54,13 @@ class ControlsOverlay extends StatelessWidget {
               visible: visible,
               child: child!,
             ),
-            child: TopControlsOverlay(controller: controller),
+            child: const TopControlsOverlay(),
           ),
         ),
-        Align(
-          alignment: Alignment.bottomCenter,
+        Positioned(
+          bottom: inFullScreen ? 24 : 16,
+          left: inFullScreen ? 48 : 16,
+          right: inFullScreen ? 48 : 16,
           child: ValueListenableBuilder(
             valueListenable: controller.controlsVisible,
             builder: (_, visible, child) => AnimatedVisibility(
@@ -36,7 +68,7 @@ class ControlsOverlay extends StatelessWidget {
               visible: visible,
               child: child!,
             ),
-            child: BottomControlsOverlay(controller: controller),
+            child: const BottomControlsOverlay(),
           ),
         ),
         Align(
@@ -46,20 +78,10 @@ class ControlsOverlay extends StatelessWidget {
               visible: visible,
               child: child!,
             ),
-            child: PlayPauseButton(controller: controller, size: 42),
+            child: const PlayPauseButton(size: 48),
           ),
         ),
       ],
     );
   }
 }
-
-// ValueListenableBuilder(
-// valueListenable: controller.controlsVisible,
-// child: controls,
-// builder: (_, visible, child) => AnimatedSwitcher(
-// duration: Durations.medium3,
-// // Without key, the fade out doesn't work
-// child: visible ? child : SizedBox.shrink(key: ValueKey(null)),
-// ),
-// ),

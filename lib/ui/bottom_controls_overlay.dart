@@ -1,27 +1,26 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vidinfra_player/controller/vidinfra_player_controller.dart';
 import 'package:vidinfra_player/ui/components/assets.dart';
+import 'package:vidinfra_player/ui/play_pause_button.dart';
+
+typedef _SelectorState = ({bool inFullScreen});
 
 class BottomControlsOverlay extends StatelessWidget {
-  final VidinfraPlayerController controller;
-
-  const BottomControlsOverlay({super.key, required this.controller});
+  const BottomControlsOverlay({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Colors.transparent, Colors.black26, Colors.black54],
-        ),
+    final controller = context.read<VidinfraPlayerController>();
+
+    return Selector<VidinfraPlayerController, _SelectorState>(
+      selector: (_, controller) => (
+        inFullScreen: controller.inFullScreen,
       ),
-      child: Column(
-        // mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.end,
+      builder: (_, state, _) => Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           ValueListenableBuilder(
             valueListenable: controller.kState.progress,
@@ -40,23 +39,45 @@ class BottomControlsOverlay extends StatelessWidget {
           ),
           Row(
             children: [
+              const PlayPauseButton(),
+
+              if (state.inFullScreen) ...[
+                IconButton(
+                  onPressed: controller.toggleMute,
+                  icon: VidinfraIcons.volumeNone(),
+                ),
+                const Spacer(),
+              ] else ...[
+                const Spacer(),
+                IconButton(
+                  onPressed: controller.toggleMute,
+                  icon: VidinfraIcons.volumeNone(),
+                ),
+              ],
+
               IconButton(
-                onPressed: () => controller.kController.enterPiPMode(),
+                onPressed: () {},
+                icon: VidinfraIcons.settings(),
+              ),
+
+              IconButton(
+                onPressed: controller.kController.enterPiPMode,
                 icon: VidinfraIcons.pip(),
               ),
-              // IconButton(
-              //   onPressed: () {
-              //     controller.autoHideControls();
-              //     controller.kController.getFit().then((fit) {
-              //       controller.kController.setFit(
-              //         fit == BoxFitMode.fit ? BoxFitMode.fill : BoxFitMode.fit,
-              //       );
-              //     });
-              //   },
-              //   icon: VidinfraIcons.fitScreen(),
-              // ),
-              const Spacer(),
-              VidinfraIcons.tenbyte(),
+
+              if (!state.inFullScreen) ...[
+                IconButton(
+                  onPressed: controller.enterFullScreen,
+                  icon: VidinfraIcons.fitScreen(),
+                ),
+                VidinfraIcons.tenbyteSmall(),
+              ] else ...[
+                IconButton(
+                  onPressed: controller.toggleBoxFit,
+                  icon: VidinfraIcons.fitScreen(),
+                ),
+                VidinfraIcons.tenbyte(),
+              ],
             ],
           ),
         ],
