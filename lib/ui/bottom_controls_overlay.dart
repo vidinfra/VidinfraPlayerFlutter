@@ -61,7 +61,10 @@ class BottomControlsOverlay extends StatelessWidget {
               ),
 
               IconButton(
-                onPressed: controller.kController.enterPiPMode,
+                onPressed: () {
+                  if (state.inFullScreen) controller.exitFullScreen();
+                  controller.kController.enterPiPMode();
+                },
                 icon: VidinfraIcons.pip(),
               ),
 
