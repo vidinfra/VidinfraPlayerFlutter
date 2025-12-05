@@ -18,9 +18,10 @@ class TopControlsOverlay extends StatelessWidget {
       ),
       child: IconButton(
         onPressed: context.read<VidinfraPlayerController>().exitFullScreen,
-        icon: VidinfraIcons.backwardSmall(),
+        icon: VidinfraIcons.back(),
       ),
       builder: (_, state, exitFullScreenIcon) => Row(
+        spacing: 12,
         children: [
           if (state.inFullscreen) ?exitFullScreenIcon,
           Expanded(

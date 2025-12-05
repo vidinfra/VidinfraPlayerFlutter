@@ -14,6 +14,9 @@ void main() {
         colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFF00FFDD)),
         iconButtonTheme: IconButtonThemeData(
           style: IconButton.styleFrom(
+            padding: EdgeInsets.zero,
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            minimumSize: Size.zero,
             highlightColor: Color(0xFF00FFDD).withAlpha(69),
           ),
         ),

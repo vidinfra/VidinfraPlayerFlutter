@@ -33,6 +33,7 @@ class VidinfraIcons {
 
   static const tenbyte = _VidinfraIcon('Tenbyte.svg');
   static const tenbyteSmall = _VidinfraIcon('Tenbyte Small.svg');
+
   static const play = _VidinfraIcon('Play.svg');
   static const pause = _VidinfraIcon('Pause.svg');
   static const brightness = _VidinfraIcon('Brightness Icon.svg');
@@ -43,6 +44,8 @@ class VidinfraIcons {
   static const subtitle = _VidinfraIcon('Subtitle Icon.svg');
   static const playbackSpeed = _VidinfraIcon('Playback Speed Icon.svg');
 
+  static const back = _VidinfraIcon('Back.svg');
+  static const forward = _VidinfraIcon('Forward.svg');
   static const forwardSmall = _VidinfraIcon('Forward Small.svg');
   static const backwardSmall = _VidinfraIcon('Backward Small.svg');
   static const forward10 = _VidinfraIcon('10 Seconds Forward.svg');

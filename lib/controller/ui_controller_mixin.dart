@@ -11,6 +11,16 @@ mixin UiControllerMixin {
 
   void notifyListeners();
 
+  void dispose() {
+    VolumeController.instance.removeListener();
+  }
+
+  Future<void> prepareVolumeBrightnessControls() async {
+    VolumeController.instance.showSystemUI = false;
+    VolumeController.instance.isMuted().then((value) => _isMuted = value);
+    VolumeController.instance.getVolume().then((value) => _volume = value);
+  }
+
   /// --------------------------------------------------------------------------
 
   /// This will be used and toggled by ui
@@ -29,9 +39,11 @@ mixin UiControllerMixin {
     if (!controlsVisible.value) return;
     _controlsHideTimer = Timer(
       const Duration(seconds: 3),
-      () => controlsVisible.value = false,
+      () => controlsVisible.value = true ?? false, // TODO Debug Only
     );
   }
+
+  void cancelControlAutoHide() => _controlsHideTimer?.cancel();
 
   void _statusUpdater() {
     final status = kState.status.value;
@@ -70,7 +82,28 @@ mixin UiControllerMixin {
     notifyListeners();
   }
 
-  late bool isMuted = false;
+  // Volume Controls -----------------------------------------------------------
 
-  void toggleMute() {}
+  double _volume = 0.0;
+
+  double get volume => _volume;
+
+  bool _isMuted = false;
+
+  bool get isMuted => _isMuted;
+
+  Future<void> toggleMute() async {
+    _isMuted = await VolumeController.instance.isMuted();
+    await VolumeController.instance.setMute(!_isMuted);
+    _isMuted = await VolumeController.instance.isMuted();
+    notifyListeners();
+  }
+
+  void setVolume(double value) {
+    _volume = value;
+    VolumeController.instance.setVolume(_volume);
+    notifyListeners();
+  }
+
+  // ---------------------------------------------------------------------------
 }
