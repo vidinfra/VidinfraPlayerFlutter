@@ -20,9 +20,9 @@ class SegmentedSeekBar extends StatefulWidget {
 
   const SegmentedSeekBar({
     super.key,
-    required this.segmentSizes,
+    this.segmentSizes = const [],
     required this.progress,
-    required this.buffer,
+    this.buffer = 0,
 
     this.onChangeStart,
     this.onChanged,
@@ -44,7 +44,6 @@ class SegmentedSeekBar extends StatefulWidget {
 
 class _SegmentedSeekBarState extends State<SegmentedSeekBar> {
   late List<double> _segmentFractions;
-  late double _total;
 
   double _localProgress = 0;
 
@@ -65,8 +64,12 @@ class _SegmentedSeekBarState extends State<SegmentedSeekBar> {
   }
 
   void _computeSegments() {
-    _total = widget.segmentSizes.fold(0.0, (a, b) => a + b);
-    _segmentFractions = widget.segmentSizes.map((s) => s / _total).toList();
+    if (widget.segmentSizes.isEmpty) {
+      _segmentFractions = [1];
+    } else {
+      final total = widget.segmentSizes.fold(0.0, (a, b) => a + b);
+      _segmentFractions = widget.segmentSizes.map((s) => s / total).toList();
+    }
   }
 
   double _posToProgress(double x, double width) {

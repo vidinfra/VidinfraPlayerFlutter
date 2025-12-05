@@ -12,6 +12,10 @@ void main() {
       home: const HomePage(title: 'Vidinfra Player Flutter SDK'),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFF00FFDD)),
+        progressIndicatorTheme: ProgressIndicatorThemeData(
+          strokeWidth: 2,
+          color: Color(0xFF00FFDD),
+        ),
         iconButtonTheme: IconButtonThemeData(
           style: IconButton.styleFrom(
             padding: EdgeInsets.zero,

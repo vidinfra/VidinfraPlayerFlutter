@@ -116,7 +116,7 @@ class BottomControlsOverlay extends StatelessWidget {
 
   Widget _seekBar(VidinfraPlayerController controller, _SelectorState state) {
     return SegmentedSeekBar(
-      segmentSizes: [16, 21, 70],
+      // segmentSizes: [16, 21, 70], TODO
       progress: state.progress!,
       buffer: state.buffer,
       onChangeStart: (_) => controller.cancelControlAutoHide(),
@@ -147,6 +147,7 @@ class BottomControlsOverlay extends StatelessWidget {
     BuildContext context,
     VidinfraPlayerController controller,
   ) {
+    return null; // TODO
     return TextButton(
       style: TextButton.styleFrom(
         textStyle: TextTheme.of(context).bodySmall,

@@ -9,6 +9,8 @@ mixin UiControllerMixin {
 
   VidinfraConfiguration get configuration;
 
+  Media? nowPlaying;
+
   void notifyListeners();
 
   void dispose() {
@@ -82,7 +84,7 @@ mixin UiControllerMixin {
     notifyListeners();
   }
 
-  // Volume Controls -----------------------------------------------------------
+  /// Volume Controls ----------------------------------------------------------
 
   double _volume = 0.0;
 
@@ -105,5 +107,13 @@ mixin UiControllerMixin {
     notifyListeners();
   }
 
-  // ---------------------------------------------------------------------------
+  /// --------------------------------------------------------------------------
+
+  /// Thumbnail Previews (TODO) -------------------------------------------------------
+
+  Future<void> prepareThumbnailPreviews() async {
+    if (nowPlaying?.spriteVttUrl == null) return;
+  }
+
+  /// --------------------------------------------------------------------------
 }

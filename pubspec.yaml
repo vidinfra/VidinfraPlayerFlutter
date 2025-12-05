@@ -18,11 +18,11 @@ dependencies:
   crypto: ^3.0.7
   http: ^1.6.0
 
-  volume_controller: ^3.4.0
 
   vector_graphics: ^1.1.19
   vector_graphics_compiler: ^1.1.19
 
+  volume_controller: ^3.4.0
   video_preview_thumbnails: ^0.1.0
   subtitle: ^0.1.4
 
