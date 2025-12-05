@@ -5,14 +5,14 @@ import 'package:flutter/services.dart';
 import 'package:kvideo/kvideo.dart' as k;
 import 'package:kvideo/player_view.dart';
 import 'package:vidinfra_player/authentication/aes_auth.dart';
+import 'package:vidinfra_player/controller/models.dart';
 import 'package:volume_controller/volume_controller.dart';
 
-import 'models.dart';
-
+part 'playback_settings_mixin.dart';
 part 'ui_controller_mixin.dart';
 
 class VidinfraPlayerController extends ChangeNotifier
-    with AESAuthMixin, UiControllerMixin {
+    with AESAuthMixin, UiControllerMixin, PlaybackSettingsMixin {
   /// Internal implementation, Not to be used outside of the package
   @override
   late final kController = k.PlayerController(
@@ -25,7 +25,10 @@ class VidinfraPlayerController extends ChangeNotifier
   @override
   k.PlayerState get kState => kController.state;
 
-  Media? nowPlaying;
+  @override
+  final ValueNotifier<Media?> _nowPlaying = ValueNotifier(null);
+
+  Media? get nowPlaying => _nowPlaying.value;
 
   @override
   final VidinfraConfiguration configuration;
@@ -38,11 +41,10 @@ class VidinfraPlayerController extends ChangeNotifier
     kState.progress.addListener(_progressUpdater);
     kState.buffer.addListener(_progressUpdater);
     kState.duration.addListener(_progressUpdater);
-
-    prepareVolumeBrightnessControls();
-
     controlsVisible.addListener(autoHideControls);
     if (controlsVisible.value) autoHideControls();
+    initializeUiControllerMixin();
+    initializePlaybackSettingsMixin();
   }
 
   // Progress Handler ----------------------------------------------------------
@@ -50,8 +52,6 @@ class VidinfraPlayerController extends ChangeNotifier
     final progress = kState.progress.value.inSeconds;
     final duration = kState.duration.value.inSeconds;
     final buffer = kState.buffer.value.inSeconds;
-
-    print("$progress $duration $buffer $_buffer");
 
     _progress = (duration > 0) ? progress / duration : null;
     _buffer = (duration > 0) ? buffer / duration : null;
@@ -79,7 +79,7 @@ class VidinfraPlayerController extends ChangeNotifier
 
   Future<void> play(Media media) async {
     if (!_init.isCompleted) await _init.future;
-    nowPlaying = media;
+    _nowPlaying.value = media;
     kController.play(
       k.Media(
         url: media.url,
@@ -88,7 +88,6 @@ class VidinfraPlayerController extends ChangeNotifier
       ),
     );
 
-    prepareThumbnailPreviews();
     notifyListeners();
   }
 
@@ -102,5 +101,8 @@ class VidinfraPlayerController extends ChangeNotifier
 
     controlsVisible.dispose();
     kController.dispose();
+
+    disposePlaybackSettingsMixin();
+    disposeUiControllerMixin();
   }
 }

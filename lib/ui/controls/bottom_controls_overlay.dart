@@ -4,7 +4,8 @@ import 'package:vidinfra_player/controller/vidinfra_player_controller.dart';
 import 'package:vidinfra_player/extensions.dart';
 import 'package:vidinfra_player/ui/components/assets.dart';
 import 'package:vidinfra_player/ui/components/segmented_seekbar.dart';
-import 'package:vidinfra_player/ui/play_pause_button.dart';
+import 'package:vidinfra_player/ui/controls/play_pause_button.dart';
+import 'package:vidinfra_player/ui/settings_menu/settings_menu.dart';
 
 typedef _SelectorState = ({
   bool inFullScreen,
@@ -64,10 +65,7 @@ class BottomControlsOverlay extends StatelessWidget {
                 _muteIcon(controller),
               ],
 
-              IconButton(
-                onPressed: () {},
-                icon: VidinfraIcons.settings(),
-              ),
+              const SettingsMenu(),
 
               IconButton(
                 onPressed: () {

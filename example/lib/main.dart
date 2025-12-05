@@ -11,7 +11,10 @@ void main() {
       debugShowCheckedModeBanner: false,
       home: const HomePage(title: 'Vidinfra Player Flutter SDK'),
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFF00FFDD)),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Color(0xFF00FFDD),
+          brightness: Brightness.dark,
+        ),
         progressIndicatorTheme: ProgressIndicatorThemeData(
           strokeWidth: 2,
           color: Color(0xFF00FFDD),
@@ -71,7 +74,10 @@ class _HomePageState extends State<HomePage> implements DownloadEventListener {
       if (url.isEmpty) throw ArgumentError("Url must be provided");
       downloader.setupAESAuth(secret: secret);
 
-      await downloader.startDownloading(Media(title: url, url: url));
+      await downloader.startDownloading(
+        Media(title: url, url: url),
+        customIdentifier: url.split("/").last,
+      );
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(

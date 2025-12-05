@@ -14,13 +14,15 @@ class VidinfraDownloader with AESAuthMixin {
     DownloadEventListener.setUp(listener);
   }
 
-  Future<String?> startDownloading(Media media) {
+  // Will return a UUID if no customIdentifier is provided
+  Future<String?> startDownloading(Media media, {String? customIdentifier}) {
     if (defaultTargetPlatform == TargetPlatform.android) {
       _downloader.setAndroidDataSourceHeaders(aesAuthHeaders);
     }
 
     return _downloader.download(
       k.Media(url: media.url, headers: {...aesAuthHeaders, ...media.headers}),
+      customIdentifier,
     );
   }
 

@@ -44,6 +44,7 @@ class VidinfraIcons {
   static const subtitle = _VidinfraIcon('Subtitle Icon.svg');
   static const playbackSpeed = _VidinfraIcon('Playback Speed Icon.svg');
 
+  static const checkmark = _VidinfraIcon('Checkmark.svg');
   static const back = _VidinfraIcon('Back.svg');
   static const forward = _VidinfraIcon('Forward.svg');
   static const forwardSmall = _VidinfraIcon('Forward Small.svg');

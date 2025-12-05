@@ -9,18 +9,22 @@ mixin UiControllerMixin {
 
   VidinfraConfiguration get configuration;
 
-  Media? nowPlaying;
+  ValueNotifier<Media?> get _nowPlaying;
 
   void notifyListeners();
 
-  void dispose() {
-    VolumeController.instance.removeListener();
-  }
+  /// Must be Called -----------------------------------------------------------
 
-  Future<void> prepareVolumeBrightnessControls() async {
+  Future<void> initializeUiControllerMixin() async {
     VolumeController.instance.showSystemUI = false;
     VolumeController.instance.isMuted().then((value) => _isMuted = value);
     VolumeController.instance.getVolume().then((value) => _volume = value);
+    _nowPlaying.addListener(_prepareThumbnailPreviews);
+  }
+
+  void disposeUiControllerMixin() {
+    VolumeController.instance.removeListener();
+    _nowPlaying.removeListener(_prepareThumbnailPreviews);
   }
 
   /// --------------------------------------------------------------------------
@@ -111,8 +115,8 @@ mixin UiControllerMixin {
 
   /// Thumbnail Previews (TODO) -------------------------------------------------------
 
-  Future<void> prepareThumbnailPreviews() async {
-    if (nowPlaying?.spriteVttUrl == null) return;
+  Future<void> _prepareThumbnailPreviews() async {
+    final media = _nowPlaying.value;
   }
 
   /// --------------------------------------------------------------------------

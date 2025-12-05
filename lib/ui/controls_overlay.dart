@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vidinfra_player/controller/vidinfra_player_controller.dart';
-import 'package:vidinfra_player/ui/bottom_controls_overlay.dart';
 import 'package:vidinfra_player/ui/components/animated_visibility.dart';
 import 'package:vidinfra_player/ui/components/assets.dart';
-import 'package:vidinfra_player/ui/play_pause_button.dart';
-import 'package:vidinfra_player/ui/top_controls_overlay.dart';
+import 'package:vidinfra_player/ui/controls/bottom_controls_overlay.dart';
+import 'package:vidinfra_player/ui/controls/play_pause_button.dart';
+import 'package:vidinfra_player/ui/controls/top_controls_overlay.dart';
 
 import 'components/rotate_icon_button.dart';
 

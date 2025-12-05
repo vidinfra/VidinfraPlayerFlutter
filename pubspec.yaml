@@ -11,8 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  kvideo:
-    path: ../kVideo
+  kvideo: ^0.0.1
 
   provider: ^6.1.5+1
   crypto: ^3.0.7
