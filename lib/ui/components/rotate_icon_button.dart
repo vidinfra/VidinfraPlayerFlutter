@@ -32,6 +32,8 @@ class _RotateIconButtonState extends State<RotateIconButton>
   }
 
   void _onPressed() async {
+    Future.delayed(widget.duration, widget.onPressed);
+
     _controller.reset();
 
     if (widget.reverse) {
@@ -39,8 +41,6 @@ class _RotateIconButtonState extends State<RotateIconButton>
     } else {
       await _controller.forward();
     }
-
-    Future.microtask(widget.onPressed);
   }
 
   @override

@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 import 'package:kvideo/kvideo.dart' as k;
 import 'package:kvideo/player_view.dart';
+import 'package:video_preview_thumbnails/video_preview_thumbnails.dart';
 import 'package:vidinfra_player/authentication/aes_auth.dart';
 import 'package:vidinfra_player/controller/models.dart';
 import 'package:volume_controller/volume_controller.dart';
@@ -33,10 +36,20 @@ class VidinfraPlayerController extends ChangeNotifier
   @override
   final VidinfraConfiguration configuration;
 
+  bool _disposed = false;
+
+  @override
+  bool get disposed => _disposed;
+
+  final _kConfiguration = k.PlayerConfiguration(
+    seekConfig: k.SeekConfig(seekBackMs: 10, seekForwardMs: 10),
+    initializeIMA: false,
+  );
+
   VidinfraPlayerController({
     this.configuration = const VidinfraConfiguration(),
   }) {
-    kController.initialize().then(_init.complete);
+    kController.initialize(configuration: _kConfiguration).then(_init.complete);
     kState.status.addListener(_statusUpdater);
     kState.progress.addListener(_progressUpdater);
     kState.buffer.addListener(_progressUpdater);
@@ -73,6 +86,7 @@ class VidinfraPlayerController extends ChangeNotifier
 
     final target = Duration(seconds: (value * duration).round());
     kController.seekTo(target);
+    previewThumbnailController.setCurrentTime(-1);
   }
 
   // ---------------------------------------------------------------------------
@@ -95,6 +109,7 @@ class VidinfraPlayerController extends ChangeNotifier
   void dispose() {
     super.dispose();
     if (!_init.isCompleted) _init.completeError("Disposed before init");
+    _disposed = true;
 
     kState.status.removeListener(_statusUpdater);
     controlsVisible.removeListener(autoHideControls);

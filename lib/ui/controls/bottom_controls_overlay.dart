@@ -117,11 +117,18 @@ class BottomControlsOverlay extends StatelessWidget {
       // segmentSizes: [16, 21, 70], TODO
       progress: state.progress!,
       buffer: state.buffer,
-      onChangeStart: (_) => controller.cancelControlAutoHide(),
-      onChanged: (_) => controller.cancelControlAutoHide(),
+      onChangeStart: (_) {
+        controller.kController.pause();
+        controller.cancelControlAutoHide();
+      },
+      onChanged: (progress) {
+        controller.cancelControlAutoHide();
+        controller.showThumbnailPreview(progress);
+      },
       onChangeEnd: (progress) {
         controller.seekTo(progress);
         controller.autoHideControls();
+        controller.kController.resume();
       },
     );
   }

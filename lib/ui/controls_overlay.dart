@@ -8,6 +8,7 @@ import 'package:vidinfra_player/ui/controls/play_pause_button.dart';
 import 'package:vidinfra_player/ui/controls/top_controls_overlay.dart';
 
 import 'components/rotate_icon_button.dart';
+import 'components/thumbnail_preview.dart';
 
 class ControlsOverlay extends StatelessWidget {
   const ControlsOverlay({super.key});
@@ -108,6 +109,8 @@ class ControlsOverlay extends StatelessWidget {
             ),
           ),
         ),
+
+        const PositionedThumbnailPreview(),
       ],
     );
   }

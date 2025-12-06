@@ -50,10 +50,14 @@ class _HomePageState extends State<HomePage> implements DownloadEventListener {
 
   String url = kDebugMode
       ? "https://jaemlu16jl.tenbytecdn.com/aa2952e7-289d-4183-9601-9c3b567c0ead/playlist.m3u8"
-      // ? "https://jaemlu16jl.tenbytecdn.com/939cb5d4-0cde-4d7b-ad61-55c78e8a60a1/playlist.m3u8"
       : "";
+
   String secret = kDebugMode
       ? "3519307ccba541099e5167b87c60ae50565148413c2af5ef247248fbade90d8f"
+      : "";
+
+  String sprite = kDebugMode
+      ? "https://jaemlu16jl.tenbytecdn.com/aa2952e7-289d-4183-9601-9c3b567c0ead/sprite.vtt"
       : "";
 
   void playVideo() {
@@ -61,7 +65,7 @@ class _HomePageState extends State<HomePage> implements DownloadEventListener {
       if (url.isEmpty) throw ArgumentError("Url must be provided");
 
       controller.setupAESAuth(secret: secret);
-      controller.play(Media(title: url, url: url));
+      controller.play(Media(title: url, url: url, spriteVttUrl: sprite));
     } catch (e) {
       ScaffoldMessenger.of(
         context,
@@ -118,6 +122,11 @@ class _HomePageState extends State<HomePage> implements DownloadEventListener {
                   initialValue: url,
                   decoration: InputDecoration(labelText: "Video URL"),
                   onChanged: (value) => url = value,
+                ),
+                TextFormField(
+                  initialValue: sprite,
+                  decoration: InputDecoration(labelText: "Sprite URL"),
+                  onChanged: (value) => sprite = value,
                 ),
                 TextFormField(
                   initialValue: secret,

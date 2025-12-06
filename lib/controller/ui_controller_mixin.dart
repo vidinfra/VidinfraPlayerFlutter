@@ -11,6 +11,8 @@ mixin UiControllerMixin {
 
   ValueNotifier<Media?> get _nowPlaying;
 
+  bool get disposed;
+
   void notifyListeners();
 
   /// Must be Called -----------------------------------------------------------
@@ -114,9 +116,53 @@ mixin UiControllerMixin {
   /// --------------------------------------------------------------------------
 
   /// Thumbnail Previews (TODO) -------------------------------------------------------
+  final previewThumbnailController = VideoPreviewThumbnailsController();
+
+  Uint8List? _spriteVtt;
+  ui.Image? _spriteImage;
+
+  Uint8List? get spriteVtt => _spriteVtt;
+
+  ui.Image? get spriteImage => _spriteImage;
 
   Future<void> _prepareThumbnailPreviews() async {
-    final media = _nowPlaying.value;
+    final sprite = Uri.tryParse(_nowPlaying.value?.spriteVttUrl ?? "");
+
+    if (sprite == null) {
+      _spriteVtt = null;
+      _spriteImage = null;
+      return notifyListeners();
+    }
+
+    http.Response response = await http.get(sprite);
+    _spriteVtt = response.bodyBytes;
+    final String vttData = String.fromCharCodes(_spriteVtt!);
+
+    final controller = VttDataController.string(vttData);
+    if (disposed || controller.vttData.isEmpty) return;
+
+    final imagePathSegments = List.of(sprite.pathSegments);
+    imagePathSegments.last = controller.vttData.first.imageUrl;
+    http.Response image = await http.get(
+      sprite.replace(pathSegments: imagePathSegments),
+    );
+
+    if (disposed) return;
+
+    final Completer<ui.Image> loadUiImage = Completer<ui.Image>();
+    ui.decodeImageFromList(image.bodyBytes, loadUiImage.complete);
+    _spriteImage = await loadUiImage.future;
+
+    if (!disposed) notifyListeners();
+  }
+
+  void showThumbnailPreview(double progress) {
+    progress = progress.clamp(0.0, 1.0);
+    final duration = kState.duration.value.inSeconds;
+    if (duration <= 0) return;
+
+    final target = Duration(seconds: (progress * duration).round());
+    previewThumbnailController.setCurrentTime(target.inMilliseconds);
   }
 
   /// --------------------------------------------------------------------------
