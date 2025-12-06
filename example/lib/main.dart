@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:vidinfra_player/controller/models.dart';
 import 'package:vidinfra_player/controller/vidinfra_downloader.dart';
@@ -46,19 +45,16 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> implements DownloadEventListener {
   final controller = VidinfraPlayerController();
-  late final downloader = VidinfraDownloader(listener: this);
+  late final downloader = VidinfraDownloader();
 
-  String url = kDebugMode
-      ? "https://jaemlu16jl.tenbytecdn.com/aa2952e7-289d-4183-9601-9c3b567c0ead/playlist.m3u8"
-      : "";
+  String url =
+      "https://jaemlu16jl.tenbytecdn.com/aa2952e7-289d-4183-9601-9c3b567c0ead/playlist.m3u8";
 
-  String secret = kDebugMode
-      ? "3519307ccba541099e5167b87c60ae50565148413c2af5ef247248fbade90d8f"
-      : "";
+  String secret =
+      "3519307ccba541099e5167b87c60ae50565148413c2af5ef247248fbade90d8f";
 
-  String sprite = kDebugMode
-      ? "https://jaemlu16jl.tenbytecdn.com/aa2952e7-289d-4183-9601-9c3b567c0ead/sprite.vtt"
-      : "";
+  String sprite =
+      "https://jaemlu16jl.tenbytecdn.com/aa2952e7-289d-4183-9601-9c3b567c0ead/sprite.vtt";
 
   void playVideo() {
     try {
@@ -79,7 +75,7 @@ class _HomePageState extends State<HomePage> implements DownloadEventListener {
       downloader.setupAESAuth(secret: secret);
 
       await downloader.startDownloading(
-        Media(title: url, url: url),
+        Media(title: url, url: url, spriteVttUrl: sprite),
         customIdentifier: url.split("/").last,
       );
     } catch (e) {
@@ -102,6 +98,7 @@ class _HomePageState extends State<HomePage> implements DownloadEventListener {
   void initState() {
     super.initState();
     controller.addListener(() => setState(() {}));
+    downloader.addListener(this);
   }
 
   @override
@@ -192,6 +189,8 @@ class _HomePageState extends State<HomePage> implements DownloadEventListener {
                                           Media(
                                             title: data.localUri!,
                                             url: data.localUri!,
+                                            spriteVttUrl: downloader
+                                                .localSpritePath(data.id!),
                                           ),
                                         );
                                       },

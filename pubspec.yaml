@@ -16,6 +16,8 @@ dependencies:
   provider: ^6.1.5+1
   crypto: ^3.0.7
   http: ^1.6.0
+  path_provider: ^2.1.5
+  path: ^1.9.1
 
 
   vector_graphics: ^1.1.19

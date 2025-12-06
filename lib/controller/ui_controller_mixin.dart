@@ -134,25 +134,36 @@ mixin UiControllerMixin {
       return notifyListeners();
     }
 
-    http.Response response = await http.get(sprite);
-    _spriteVtt = response.bodyBytes;
+    if (sprite.scheme == "file") {
+      _spriteVtt = File(sprite.toFilePath()).readAsBytesSync();
+    } else {
+      http.Response response = await http.get(sprite);
+      _spriteVtt = response.bodyBytes;
+    }
+
     final String vttData = String.fromCharCodes(_spriteVtt!);
 
     final controller = VttDataController.string(vttData);
     if (disposed || controller.vttData.isEmpty) return;
 
+    final Completer<ui.Image> loadUiImage = Completer<ui.Image>();
     final imagePathSegments = List.of(sprite.pathSegments);
     imagePathSegments.last = controller.vttData.first.imageUrl;
-    http.Response image = await http.get(
-      sprite.replace(pathSegments: imagePathSegments),
-    );
 
     if (disposed) return;
+    if (sprite.scheme == "file") {
+      final image = File(
+        sprite.replace(pathSegments: imagePathSegments).toFilePath(),
+      );
+      ui.decodeImageFromList(image.readAsBytesSync(), loadUiImage.complete);
+    } else {
+      final image = await http.get(
+        sprite.replace(pathSegments: imagePathSegments),
+      );
+      ui.decodeImageFromList(image.bodyBytes, loadUiImage.complete);
+    }
 
-    final Completer<ui.Image> loadUiImage = Completer<ui.Image>();
-    ui.decodeImageFromList(image.bodyBytes, loadUiImage.complete);
     _spriteImage = await loadUiImage.future;
-
     if (!disposed) notifyListeners();
   }
 
