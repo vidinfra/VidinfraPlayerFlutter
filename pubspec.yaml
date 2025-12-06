@@ -27,6 +27,8 @@ dependencies:
   video_preview_thumbnails: ^0.1.0
   subtitle: ^0.1.4
 
+  flutter_hls_parser: ^2.0.1
+
 
 dev_dependencies:
   flutter_test:

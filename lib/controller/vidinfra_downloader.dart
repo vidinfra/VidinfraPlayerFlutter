@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_hls_parser/flutter_hls_parser.dart';
 import 'package:http/http.dart' as http;
 import 'package:kvideo/gen/pigeon.g.dart' as k;
 import 'package:path/path.dart' as p;
@@ -40,8 +41,27 @@ class VidinfraDownloader with AESAuthMixin implements DownloadEventListener {
       customIdentifier = null;
     }
 
+    late final String url;
+    try {
+      final playlistUri = Uri.parse(media.url);
+      final content = await http.get(playlistUri);
+      final master = await HlsPlaylistParser.create().parseString(
+        playlistUri,
+        content.body,
+      );
+
+      if (master is HlsMasterPlaylist) {
+        url = await _pickVideoTrack(master);
+      } else {
+        url = media.url;
+      }
+    } catch (e, s) {
+      if (kDebugMode) debugPrintStack(stackTrace: s, label: e.toString());
+      url = media.url;
+    }
+
     final id = await _downloader.download(
-      k.Media(url: media.url, headers: {...aesAuthHeaders, ...media.headers}),
+      k.Media(url: url, headers: {...aesAuthHeaders, ...media.headers}),
       customIdentifier,
     );
 
@@ -146,4 +166,11 @@ class VidinfraDownloader with AESAuthMixin implements DownloadEventListener {
   }
 
   /// --------------------------------------------------------------------------
+
+  /// Track Picker -------------------------------------------------------------
+  Future<String> _pickVideoTrack(HlsMasterPlaylist master) async {
+    // final tracks = List.of(master.variants);
+    final tracks = List.of(master.mediaPlaylistUrls.map((e) => e.toString()));
+    return tracks.first; // Highest Quality
+  }
 }

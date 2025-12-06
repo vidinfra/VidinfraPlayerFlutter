@@ -76,7 +76,7 @@ class _HomePageState extends State<HomePage> implements DownloadEventListener {
 
       await downloader.startDownloading(
         Media(title: url, url: url, spriteVttUrl: sprite),
-        customIdentifier: url.split("/").last,
+        customIdentifier: url.hashCode.toString(),
       );
     } catch (e) {
       if (!mounted) return;
