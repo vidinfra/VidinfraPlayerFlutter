@@ -45,7 +45,7 @@ mixin UiControllerMixin {
     if (!controlsVisible.value) return;
     _controlsHideTimer = Timer(
       const Duration(seconds: 3),
-      () => controlsVisible.value = true ?? false, // TODO Debug Only
+      () => controlsVisible.value = false,
     );
   }
 
