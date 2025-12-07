@@ -1,6 +1,6 @@
 name: vidinfra_player
 description: "Vidinfra Player SDK For Flutter"
-version: 0.0.1
+version: 0.0.2
 homepage: https://www.tenbyte.io
 
 environment:
