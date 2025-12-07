@@ -1,7 +1,7 @@
 name: vidinfra_player
 description: "Vidinfra Player SDK For Flutter"
 version: 0.0.1
-homepage:
+homepage: https://www.tenbyte.io
 
 environment:
   sdk: ^3.8.1
@@ -19,7 +19,6 @@ dependencies:
   path_provider: ^2.1.5
   path: ^1.9.1
 
-
   vector_graphics: ^1.1.19
   vector_graphics_compiler: ^1.1.19
 
@@ -28,7 +27,6 @@ dependencies:
   subtitle: ^0.1.4
 
   flutter_hls_parser: ^2.0.1
-
 
 dev_dependencies:
   flutter_test:
@@ -40,7 +38,6 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
   # To add assets to your package, add an assets section, like this:
   assets:
     - path: assets/icons/
