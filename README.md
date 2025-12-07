@@ -1,238 +1,168 @@
 # Vidinfra Player for Flutter
 
-Vidinfra Player is a lightweight Flutter SDK that provides an embeddable video player built on top of `kvideo`. It includes a `VidinfraPlayerView` widget for rendering video, a `VidinfraPlayerController` for playback control, downloading helpers via `VidinfraDownloader`, and simple authentication header helpers.
+Official Flutter SDK for **[Vidinfra](https://tenbyte.io/vidinfra)** by [Tenbyte](https://www.tenbyte.io).
 
-This repository contains the package source and an `example/` app demonstrating usage.
+Vidinfra is a secure video infrastructure platform with unlimited bandwidth, built-in security, and piracy protection. This Flutter SDK provides an embeddable video player widget (`VidinfraPlayerView`), a playback controller (`VidinfraPlayerController`), download helpers (`VidinfraDownloader`), and AES authentication helpers for secure video delivery.
 
---
+Built on top of `kvideo`, this lightweight SDK enables seamless integration of Vidinfra's video hosting capabilities into Flutter applications.
+
+**Learn more about Vidinfra:** [https://tenbyte.io/vidinfra](https://tenbyte.io/vidinfra)
+
+## About Vidinfra
+
+Vidinfra is an all-in-one video hosting platform that provides:
+
+- **Unlimited CDN bandwidth** - Global edge network for fast video delivery
+- **Built-in security** - Token authentication, geo-blocking, domain restrictions, and multi-DRM protection
+- **Piracy protection** - Keep your content secure and prevent revenue leaks
+- **Easy management** - Upload, organize, and manage your video library via API or dashboard
+- **Customizable player** - Personalize with logos, subtitles, and thumbnails
+- **Live streaming** - RTMP/SRT ingest with adaptive HLS delivery
+- **Video analytics** - Track performance and viewer engagement metrics
+
+This Flutter SDK enables you to integrate Vidinfra's video playback, downloading, and authentication features directly into your Flutter applications.
+
+---
 
 **Quick Links**
 
+- **Product:** [Vidinfra](https://tenbyte.io/vidinfra) - Secure video infrastructure with unlimited CDN
+- **Company:** [Tenbyte](https://www.tenbyte.io)
 - **Package:** `vidinfra_player` (see `pubspec.yaml`)
-- **Example app:** `example/` — run for a full demo
+- **Example app:** `example/`
+- **License:** MIT (see `LICENSE`)
 
 --
 
-**Contents**
+## Features
 
-- Overview
-- Installation
-- Quick Start (basic usage)
-- API Reference (main classes)
-- Examples (simple snippets)
-- Running the Example
+- Embeddable video widget (`VidinfraPlayerView`) with controller-driven playback API.
+- AES authentication helpers to generate and merge request headers.
+- Downloader with start/remove/list/status helpers and listener hooks.
+- Media model includes subtitles, sprite thumbnails, and chapter VTT fields.
+- Access to lower-level `kvideo` notifiers for advanced playback state.
 
---
+## Requirements
+
+- Dart >=3.8.1, Flutter >=1.17.0 (from `pubspec.yaml`).
+- Standard Flutter Android/iOS setup with network access; ensure platform permissions for networking/downloading as required by your app.
 
 ## Installation
 
-Add `vidinfra_player` to your `pubspec.yaml` dependencies (replace version as needed):
+Add `vidinfra_player` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-	flutter:
-		sdk: flutter
-	vidinfra_player:
-		path: ../  # or use hosted version
+  flutter:
+    sdk: flutter
+  vidinfra_player: ^0.0.1 # or use a local path/git ref
 ```
 
-Then run:
+Then install:
 
 ```bash
 flutter pub get
 ```
 
-## Quick Start
-
-The package exposes the main pieces via `package:vidinfra_player/vidinfra_player.dart`.
-
-Minimal usage:
+Import everything from the umbrella entrypoint:
 
 ```dart
-import 'package:flutter/material.dart';
 import 'package:vidinfra_player/vidinfra_player.dart';
+```
 
-final controller = VidinfraPlayerController();
+## Quick Start
 
-// Create a Media object describing the video
-final media = Media(
-	title: 'Sample',
-	url: 'https://example.com/video.mpd',
-	headers: {},
-);
+A minimal stateful widget using the controller and view:
 
-// Play media
-await controller.play(media);
+```dart
+class PlayerExample extends StatefulWidget {
+  const PlayerExample({super.key});
 
-// In your widget tree:
-Widget build(BuildContext context) {
-	return VidinfraPlayerView(controller: controller);
+  @override
+  State<PlayerExample> createState() => _PlayerExampleState();
+}
+
+class _PlayerExampleState extends State<PlayerExample> {
+  final controller = VidinfraPlayerController();
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  Future<void> _play() async {
+    await controller.play(Media(
+      title: 'Sample',
+      url: 'https://example.com/video.mpd',
+      headers: {}, // merged with auth headers if configured
+    ));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Expanded(child: VidinfraPlayerView(controller: controller)),
+        ElevatedButton(onPressed: _play, child: const Text('Play')),
+      ],
+    );
+  }
 }
 ```
+
+## Downloads (overview)
+
+- Create a downloader: `final downloader = VidinfraDownloader(listener: myListener);`
+- Start: `final id = await downloader.startDownloading(media);`
+- Manage: `remove(id)`, `removeAll()`, `getAllDownloadIds()`, `getDownloadStatus(id)`.
+- Implement `DownloadEventListener` to react to completion, progress, errors, and removal.
 
 ## API Reference (summary)
 
-This section covers the main public classes and their primary members. For full details, inspect the source in `lib/`.
+For details, see the source under `lib/`.
 
-- `VidinfraPlayerController` (in `lib/controller/vidinfra_player_controller.dart`)
-	- Constructor: `VidinfraPlayerController({VidinfraConfiguration configuration})`
-	- Properties:
-		- `nowPlaying` — the currently loaded `Media?`
-		- `progress` — media progress (0.0 - 1.0) or `null` when unknown
-		- `buffer` — buffer progress (0.0 - 1.0)
-		- `configuration` — `VidinfraConfiguration`
-	- Methods:
-		- `Future<void> play(Media media)` — loads and starts playback of the given `Media`.
-		- `void seekTo(double value)` — seek to position (0.0 - 1.0)
-		- `void dispose()` — release resources
-	- Notes: The controller internally wraps a `k.PlayerController` from the `kvideo` package. It also mixes in `AESAuthMixin` which provides `aesAuthHeaders` used for authenticated requests.
+- `VidinfraPlayerController` (`lib/controller/vidinfra_player_controller.dart`)
+  - `play(Media)`, `seekTo(double)`, `dispose()`.
+  - Properties: `nowPlaying`, `progress` (0.0–1.0 or null), `buffer`, `configuration`.
+  - Wraps `k.PlayerController` and mixes in `AESAuthMixin` (`aesAuthHeaders`).
+- `VidinfraDownloader` (`lib/controller/vidinfra_downloader.dart`)
+  - `startDownloading`, `remove`, `removeAll`, `getAllDownloadIds`, `getDownloadStatus`.
+- `Media` (`lib/controller/models.dart`)
+  - Fields: `title`, `description?`, `url` (required), `subtitles`, `startFromSecond`, `headers`, `spriteVttUrl`, `chaptersVttUrl`.
+- `VidinfraConfiguration` and `FullscreenExitAppState` for player configuration options.
 
-- `VidinfraDownloader` (in `lib/controller/vidinfra_downloader.dart`)
-	- Constructor: `VidinfraDownloader({DownloadEventListener? listener})`
-	- Methods:
-		- `Future<String?> startDownloading(Media media, {String? customIdentifier})` — starts a download and returns an id.
-		- `Future<void> remove(String id)` — remove a single download
-		- `Future<void> removeAll()` — remove all downloads
-		- `Future<List<String>> getAllDownloadIds()` — list download ids
-		- `Future<k.DownloadData?> getDownloadStatus(String id)` — get status
+## Authentication (AES)
 
-- `Media` (in `lib/controller/models.dart`)
-	- Fields:
-		- `title`, `description?`, `url` (required), `subtitles`, `startFromSecond`, `headers`, `spriteVttUrl`, `chaptersVttUrl`.
-
-- `VidinfraConfiguration` and `FullscreenExitAppState` for configuration options.
-
-## Simple Implementation Examples
-
-- Basic playback (stateless):
+Use the controller or downloader to set up auth headers for subsequent requests:
 
 ```dart
-final controller = VidinfraPlayerController();
-
-// Start playing
-controller.play(Media(title: 'Intro', url: 'https://example.com/intro.mpd'));
-
-// In widget:
-VidinfraPlayerView(controller: controller);
-```
-
-- With downloader:
-
-```dart
-final downloader = VidinfraDownloader();
-final id = await downloader.startDownloading(media);
-// monitor status via getDownloadStatus or an event listener
-```
-
-## Notes on Authentication
-
-The package includes an `AESAuthMixin` (internal) used to produce request headers required by some Vidinfra services. When using `VidinfraDownloader` on Android, headers are applied to the platform download manager. If you need custom headers for a `Media` item, pass them in the `Media.headers` map — they are merged with auth headers.
-
-### AES Auth (examples)
-
-You can use the controller or downloader mixin helper to generate and attach auth headers before playing or downloading:
-
-```dart
-// Use the controller (or downloader) to setup headers used for subsequent requests
 controller.setupAESAuth(secret: mySecret);
 // or
 downloader.setupAESAuth(secret: mySecret);
-
-// The headers are merged when calling play/download:
-controller.play(Media(title: 'x', url: 'https://...')); // uses aesAuthHeaders
-
-// If you prefer to generate headers directly:
-final headers = AESAuth.generateHeaders(secret: mySecret);
-// You can pass these headers directly to a Media item too
-controller.play(Media(title: 'x', url: 'https://...', headers: {...headers, 'X-Other': '1'}));
 ```
 
-generateHeaders supports optional parameters for `method`, `referer`, and `options` (nonce/timestamp) so you can produce deterministic headers for testing:
+Headers are merged automatically when calling `play`/`startDownloading`. If you need deterministic headers (for testing), generate them directly:
 
 ```dart
 final headers = AESAuth.generateHeaders(
-	secret: mySecret,
-	method: 'GET',
-	referer: 'player.vidinfra.com',
-	options: (nonceLength: 24, timestamp: 1670000000, nonce: 'fixednonce'),
+  secret: mySecret,
+  method: 'GET',
+  referer: 'player.vidinfra.com',
+  options: (nonceLength: 24, timestamp: 1670000000, nonce: 'fixednonce'),
 );
+controller.play(Media(title: 'x', url: 'https://...', headers: headers));
 ```
 
-These headers include `X-Auth-Signature`, `X-Auth-Timestamp`, `X-Auth-Nonce`, and `Platform`.
+Generated headers include `X-Auth-Signature`, `X-Auth-Timestamp`, `X-Auth-Nonce`, and `Platform`.
 
-### Listening to Download & Player Events
+## Listening to Events
 
-Below are compact examples showing how to listen to download lifecycle events and basic player events.
+- High-level: `controller.addListener(() { /* react to nowPlaying/progress */ });`
+- Low-level: use `controller.kController.state.*` notifiers (status, progress, buffer, duration, pipMode, etc.) for platform-specific signals.
+- Downloads: provide a `DownloadEventListener` to `VidinfraDownloader` for progress, error, completion, and removal callbacks.
 
-Download listener example:
-
-```dart
-class MyDownloadListener implements DownloadEventListener {
-	@override
-	void onCompletion(String id, String location) {
-		print('Download complete: $id -> $location');
-	}
-
-	@override
-	void onError(String id, String error) {
-		print('Download error: $id -> $error');
-	}
-
-	@override
-	void onProgress(String id, int progress) {
-		// progress is an integer percentage (0-100)
-		print('Progress: $id -> $progress%');
-	}
-
-	@override
-	void onRemoved(String id) {
-		print('Removed: $id');
-	}
-}
-
-// Usage
-final listener = MyDownloadListener();
-final downloader = VidinfraDownloader(listener: listener);
-await downloader.startDownloading(Media(title: 'x', url: 'https://...'));
-```
-
-Player event examples
-
-1) Using the controller's general listener (simple):
-
-```dart
-// React when controller notifies (e.g., nowPlaying/progress updated)
-controller.addListener(() {
-	final media = controller.nowPlaying;
-	final progress = controller.progress; // 0.0 - 1.0 or null
-	// update UI or state
-});
-```
-
-2) Subscribe to lower-level `kvideo` notifiers exposed by the controller (more specific):
-
-```dart
-// Listen to playback status changes
-controller.kController.state.status.addListener(() {
-	final status = controller.kController.state.status.value;
-	print('Player status changed: $status');
-});
-
-// Listen to progress updates (Duration)
-controller.kController.state.progress.addListener(() {
-	final pos = controller.kController.state.progress.value;
-	print('Position: ${pos.inSeconds}s');
-});
-```
-
-Notes:
-- `controller.addListener` is the simplest cross-platform way to observe changes made by `VidinfraPlayerController` (it forwards internal updates). Use it for UI updates.
-- Accessing `controller.kController.state` gives fine-grained ValueNotifiers (status, progress, buffer, duration, pipMode, etc.) when you need platform/player-specific events. Although the controller internally owns the `kController`, it exposes it for advanced use. Be defensive when using lower-level notifiers (check for nulls where appropriate).
-- For downloads, `VidinfraDownloader` calls the listener setup internally; pass your listener to its constructor and it will receive callbacks.
-
-## Example App
-
-See the `example/` directory for a complete sample Flutter app showing how to wire up the controller, use `VidinfraPlayerView`, and the downloader. To run the example:
+## Running the Example
 
 ```bash
 cd example
@@ -242,9 +172,10 @@ flutter run -d <device-id>
 
 ## Contributing
 
-Contributions are welcome. Please open issues or PRs and follow existing code style.
+Contributions are welcome! Please open issues or PRs and follow the existing code style.
+
+For questions or support about Vidinfra, visit [https://tenbyte.io/vidinfra](https://tenbyte.io/vidinfra) or contact [Tenbyte](https://www.tenbyte.io).
 
 ## License
 
-See the `LICENSE` file in the repository.
-
+This project is licensed under the MIT License. See `LICENSE` for details.
