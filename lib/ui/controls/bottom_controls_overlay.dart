@@ -80,13 +80,15 @@ class BottomControlsOverlay extends StatelessWidget {
                   onPressed: controller.enterFullScreen,
                   icon: VidinfraIcons.fitScreen(),
                 ),
-                VidinfraIcons.tenbyteSmall(),
+                if (controller.configuration.vidinfraBranding)
+                  VidinfraIcons.tenbyteSmall(),
               ] else ...[
                 IconButton(
                   onPressed: controller.toggleBoxFit,
                   icon: VidinfraIcons.fitScreen(),
                 ),
-                VidinfraIcons.tenbyte(),
+                if (controller.configuration.vidinfraBranding)
+                  VidinfraIcons.tenbyte(),
               ],
             ],
           ),

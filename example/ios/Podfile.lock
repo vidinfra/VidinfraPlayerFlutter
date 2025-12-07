@@ -4,10 +4,17 @@ PODS:
   - kvideo (0.0.1):
     - Flutter
     - GoogleAds-IMA-iOS-SDK (~> 3.28.10)
+  - path_provider_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
+  - volume_controller (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
   - kvideo (from `.symlinks/plugins/kvideo/ios`)
+  - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
+  - volume_controller (from `.symlinks/plugins/volume_controller/ios`)
 
 SPEC REPOS:
   trunk:
@@ -18,11 +25,17 @@ EXTERNAL SOURCES:
     :path: Flutter
   kvideo:
     :path: ".symlinks/plugins/kvideo/ios"
+  path_provider_foundation:
+    :path: ".symlinks/plugins/path_provider_foundation/darwin"
+  volume_controller:
+    :path: ".symlinks/plugins/volume_controller/ios"
 
 SPEC CHECKSUMS:
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
   GoogleAds-IMA-iOS-SDK: 2d7d6e4736a5b29c21e5067fdd75f500144e1dcd
   kvideo: d9b3f3d9571dc8c96d03243fa5ecf8af1fa62a12
+  path_provider_foundation: 0b743cbb62d8e47eab856f09262bb8c1ddcfe6ba
+  volume_controller: 2e3de73d6e7e81a0067310d17fb70f2f86d71ac7
 
 PODFILE CHECKSUM: 53a6aebc29ccee84c41f92f409fc20cd4ca011f1
 

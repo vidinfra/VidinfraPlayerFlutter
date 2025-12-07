@@ -43,7 +43,7 @@ class VidinfraPlayerController extends ChangeNotifier
   bool get disposed => _disposed;
 
   final _kConfiguration = k.PlayerConfiguration(
-    seekConfig: k.SeekConfig(seekBackMs: 10, seekForwardMs: 10),
+    seekConfig: k.SeekConfig(seekBackMs: 10_000, seekForwardMs: 10_000),
     initializeIMA: false,
   );
 

@@ -56,10 +56,15 @@ class SubtitleData {
 
 class VidinfraConfiguration {
   final FullscreenExitAppState fullscreenExitAppState;
+
+  /// If the branding should be visible or not
+  final bool vidinfraBranding;
+
   // final Appearance appearance;
 
   const VidinfraConfiguration({
     this.fullscreenExitAppState = const FullscreenExitAppState(),
+    this.vidinfraBranding = true,
     // required this.appearance,
   });
 }

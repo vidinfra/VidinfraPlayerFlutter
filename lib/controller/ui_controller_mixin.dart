@@ -115,7 +115,7 @@ mixin UiControllerMixin {
 
   /// --------------------------------------------------------------------------
 
-  /// Thumbnail Previews (TODO) -------------------------------------------------------
+  /// Thumbnail Previews -------------------------------------------------------
   final previewThumbnailController = VideoPreviewThumbnailsController();
 
   Uint8List? _spriteVtt;
@@ -164,6 +164,7 @@ mixin UiControllerMixin {
     }
 
     _spriteImage = await loadUiImage.future;
+    previewThumbnailController.setCurrentTime(-1);
     if (!disposed) notifyListeners();
   }
 
