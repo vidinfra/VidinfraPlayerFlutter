@@ -2,6 +2,8 @@ name: vidinfra_player
 description: "Vidinfra Player SDK For Flutter"
 version: 0.0.3
 homepage: https://www.tenbyte.io
+repository: https://github.com/vidinfra/VidinfraPlayerFlutter
+issue_tracker: https://github.com/vidinfra/VidinfraPlayerFlutter/issues
 
 environment:
   sdk: ^3.8.1
@@ -69,3 +71,4 @@ flutter:
   #
   # For details regarding fonts in packages, see
   # https://flutter.dev/to/font-from-package
+topics: ["video", "vidinfra", "drm", "download", "hls"]
