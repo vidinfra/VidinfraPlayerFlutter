@@ -55,7 +55,7 @@ Add `vidinfra_player` to your `pubspec.yaml`:
 dependencies:
   flutter:
     sdk: flutter
-  vidinfra_player: ^0.0.1 # or use a local path/git ref
+  vidinfra_player: ^0.0.4 # or use a local path/git ref
 ```
 
 Then install:
