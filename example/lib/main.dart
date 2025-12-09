@@ -47,14 +47,11 @@ class _HomePageState extends State<HomePage> implements DownloadEventListener {
   final controller = VidinfraPlayerController();
   late final downloader = VidinfraDownloader();
 
-  String url =
-      "https://jaemlu16jl.tenbytecdn.com/aa2952e7-289d-4183-9601-9c3b567c0ead/playlist.m3u8";
+  String url ="https://.tenbytecdn.com/aa2952e7-289d-4183-9601-9c3b567c0ead/playlist.m3u8";
 
-  String secret =
-      "3519307ccba541099e5167b87c60ae50565148413c2af5ef247248fbade90d8f";
+  String secret ="";
 
-  String sprite =
-      "https://jaemlu16jl.tenbytecdn.com/aa2952e7-289d-4183-9601-9c3b567c0ead/sprite.vtt";
+  String sprite ="https://.tenbytecdn.com/aa2952e7-289d-4183-9601-9c3b567c0ead/sprite.vtt";
 
   void playVideo() {
     try {
