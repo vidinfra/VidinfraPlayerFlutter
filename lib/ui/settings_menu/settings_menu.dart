@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:vidinfra_player/controller/vidinfra_player_controller.dart';
 import 'package:vidinfra_player/ui/components/assets.dart';
 
+import '../../extensions.dart';
+
 enum _SelectedSubMenu { quality, speed }
 
 typedef _QualityMenuState = ({List<k.TrackData> tracks, k.TrackData? selected});
@@ -110,10 +112,7 @@ class _SettingsMenuState extends State<SettingsMenu> {
             const SizedBox(width: 32),
             Selector<VidinfraPlayerController, double>(
               selector: (_, controller) => controller.playbackSpeed,
-              builder: (_, value, child) {
-                if (value == 1) return const Text("1x");
-                return Text("${value}x");
-              },
+              builder: (_, value, _) => Text("${value.withoutZeroDecimal}x"),
             ),
             VidinfraIcons.forwardSmall(size: 18),
           ],
@@ -167,7 +166,6 @@ class _SettingsMenuState extends State<SettingsMenu> {
   }
 
   Widget speedSubMenu() {
-    const speeds = <double>[0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
     return Selector<VidinfraPlayerController, double>(
       selector: (_, controller) => controller.playbackSpeed,
       child: TextButton.icon(
@@ -182,11 +180,11 @@ class _SettingsMenuState extends State<SettingsMenu> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ?header,
-            for (final speed in speeds) ...{
+            for (final speed in controller.configuration.playbackSpeeds) ...{
               MenuItemButton(
                 closeOnActivate: true,
                 leadingIcon: _activeIndicator(activeSpeed, speed),
-                child: Text("${speed}x"),
+                child: Text("${speed.withoutZeroDecimal}x"),
                 onPressed: () => controller.setPlaybackSpeed(speed),
               ),
             },

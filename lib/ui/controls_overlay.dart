@@ -86,25 +86,36 @@ class ControlsOverlay extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               spacing: 48,
               children: [
-                RotateIconButton(
-                  onPressed: () {
-                    controller.kController.seekBack();
-                    controller.autoHideControls();
-                  },
-                  icon: VidinfraIcons.backward10(size: 28),
-                  reverse: true,
-                ),
-                const SizedBox.square(
-                  dimension: 48,
-                  child: PlayPauseButton(size: 42),
-                ),
-                RotateIconButton(
-                  onPressed: () {
-                    controller.kController.seekForward();
-                    controller.autoHideControls();
-                  },
-                  icon: VidinfraIcons.forward10(size: 28),
-                ),
+                if (controller.configuration.controls.backward)
+                  RotateIconButton(
+                    onPressed: () {
+                      controller.kController.seekBack();
+                      controller.autoHideControls();
+                    },
+                    icon: VidinfraIcons.backward10(size: 28),
+                    reverse: true,
+                  )
+                else
+                  const SizedBox.shrink(),
+
+                if (controller.configuration.controls.bigPlayButton)
+                  const SizedBox.square(
+                    dimension: 48,
+                    child: PlayPauseButton(size: 42),
+                  )
+                else
+                  const SizedBox.shrink(),
+
+                if (controller.configuration.controls.backward)
+                  RotateIconButton(
+                    onPressed: () {
+                      controller.kController.seekForward();
+                      controller.autoHideControls();
+                    },
+                    icon: VidinfraIcons.forward10(size: 28),
+                  )
+                else
+                  const SizedBox.shrink(),
               ],
             ),
           ),

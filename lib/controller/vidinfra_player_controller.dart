@@ -9,7 +9,8 @@ import 'package:kvideo/kvideo.dart' as k;
 import 'package:kvideo/player_view.dart';
 import 'package:video_preview_thumbnails/video_preview_thumbnails.dart';
 import 'package:vidinfra_player/authentication/aes_auth.dart';
-import 'package:vidinfra_player/controller/models.dart';
+import 'package:vidinfra_player/data/models/configuration.dart';
+import 'package:vidinfra_player/data/models/media.dart';
 import 'package:volume_controller/volume_controller.dart';
 
 part 'playback_settings_mixin.dart';
@@ -35,7 +36,7 @@ class VidinfraPlayerController extends ChangeNotifier
   Media? get nowPlaying => _nowPlaying.value;
 
   @override
-  final VidinfraConfiguration configuration;
+  final Configuration configuration;
 
   bool _disposed = false;
 
@@ -48,7 +49,7 @@ class VidinfraPlayerController extends ChangeNotifier
   );
 
   VidinfraPlayerController({
-    this.configuration = const VidinfraConfiguration(),
+    this.configuration = const Configuration(),
   }) {
     kController.initialize(configuration: _kConfiguration).then(_init.complete);
     kState.status.addListener(_statusUpdater);
@@ -61,7 +62,7 @@ class VidinfraPlayerController extends ChangeNotifier
     initializePlaybackSettingsMixin();
   }
 
-  // Progress Handler ----------------------------------------------------------
+  /// Progress Handler ---------------------------------------------------------
   void _progressUpdater() {
     final progress = kState.progress.value.inSeconds;
     final duration = kState.duration.value.inSeconds;
@@ -90,7 +91,7 @@ class VidinfraPlayerController extends ChangeNotifier
     previewThumbnailController.setCurrentTime(-1);
   }
 
-  // ---------------------------------------------------------------------------
+  /// --------------------------------------------------------------------------
 
   Future<void> play(Media media) async {
     if (!_init.isCompleted) await _init.future;

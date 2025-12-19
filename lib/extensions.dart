@@ -13,3 +13,9 @@ extension DurationExtensions on Duration {
     return h > 0 ? "${two(h)}:${two(m)}:${two(s)}" : "${two(m)}:${two(s)}";
   }
 }
+
+extension NumberExtensions on num {
+  num get withoutZeroDecimal {
+    return this % 1 == 0 ? toInt() : this;
+  }
+}

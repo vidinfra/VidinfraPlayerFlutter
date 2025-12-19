@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vidinfra_player/controller/models.dart';
-import 'package:vidinfra_player/controller/vidinfra_downloader.dart';
-import 'package:vidinfra_player/controller/vidinfra_player_controller.dart';
-import 'package:vidinfra_player/ui/vidinfra_player_view.dart';
+import 'package:vidinfra_player/vidinfra_player.dart';
 
 void main() {
   runApp(
@@ -47,11 +44,13 @@ class _HomePageState extends State<HomePage> implements DownloadEventListener {
   final controller = VidinfraPlayerController();
   late final downloader = VidinfraDownloader();
 
-  String url ="https://.tenbytecdn.com/aa2952e7-289d-4183-9601-9c3b567c0ead/playlist.m3u8";
+  String url =
+      "https://.tenbytecdn.com/aa2952e7-289d-4183-9601-9c3b567c0ead/playlist.m3u8";
 
-  String secret ="";
+  String secret = "";
 
-  String sprite ="https://.tenbytecdn.com/aa2952e7-289d-4183-9601-9c3b567c0ead/sprite.vtt";
+  String sprite =
+      "https://.tenbytecdn.com/aa2952e7-289d-4183-9601-9c3b567c0ead/sprite.vtt";
 
   void playVideo() {
     try {

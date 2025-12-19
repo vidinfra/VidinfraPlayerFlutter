@@ -13,7 +13,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  kvideo: ^0.0.1
+  kvideo: ^0.0.2
 
   provider: ^6.1.5+1
   crypto: ^3.0.7

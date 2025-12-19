@@ -36,13 +36,23 @@ class BottomControlsOverlay extends StatelessWidget {
               Row(
                 spacing: 12,
                 children: [
-                  _progressTextBuilder(context, controller.kState.progress),
-                  Expanded(child: _seekBar(controller, state)),
-                  _progressTextBuilder(context, controller.kState.duration),
+                  ?_progressTextBuilder(
+                    context,
+                    controller,
+                    controller.kState.progress,
+                  ),
+                  if (controller.configuration.controls.seekBar)
+                    Expanded(child: _seekBar(controller, state)),
+                  ?_progressTextBuilder(
+                    context,
+                    controller,
+                    controller.kState.duration,
+                  ),
                 ],
               ),
             } else ...{
-              _seekBar(controller, state),
+              if (controller.configuration.controls.seekBar)
+                _seekBar(controller, state),
             },
           },
 
@@ -50,44 +60,52 @@ class BottomControlsOverlay extends StatelessWidget {
           Row(
             spacing: 12,
             children: [
-              const PlayPauseButton(showWhileLoading: true),
+              if (controller.configuration.controls.playPause)
+                const PlayPauseButton(showWhileLoading: true),
 
               if (state.inFullScreen) ...[
-                _muteIcon(controller),
+                ?_muteIcon(controller),
                 const Spacer(),
               ] else ...[
                 if (state.progress != null) ...{
-                  _progressTextBuilder(context, controller.kState.progress),
+                  ?_progressTextBuilder(
+                    context,
+                    controller,
+                    controller.kState.progress,
+                  ),
                   ?_chaptersButton(context, controller),
                 },
 
                 const Spacer(),
-                _muteIcon(controller),
+                ?_muteIcon(controller),
               ],
 
-              const SettingsMenu(),
+              if (controller.configuration.controls.settings)
+                const SettingsMenu(),
 
-              IconButton(
-                onPressed: () {
-                  if (state.inFullScreen) controller.exitFullScreen();
-                  controller.kController.enterPiPMode();
-                },
-                icon: VidinfraIcons.pip(),
-              ),
+              if (controller.configuration.controls.pictureInPicture)
+                IconButton(
+                  onPressed: () {
+                    if (state.inFullScreen) controller.exitFullScreen();
+                    controller.kController.enterPiPMode();
+                  },
+                  icon: VidinfraIcons.pip(),
+                ),
 
               if (!state.inFullScreen) ...[
-                IconButton(
-                  onPressed: controller.enterFullScreen,
-                  icon: VidinfraIcons.fitScreen(),
-                ),
-                if (controller.configuration.vidinfraBranding)
+                if (controller.configuration.controls.fullscreen)
+                  IconButton(
+                    onPressed: controller.enterFullScreen,
+                    icon: VidinfraIcons.fitScreen(),
+                  ),
+                if (controller.configuration.controls.branding)
                   VidinfraIcons.tenbyteSmall(),
               ] else ...[
                 IconButton(
                   onPressed: controller.toggleBoxFit,
                   icon: VidinfraIcons.fitScreen(),
                 ),
-                if (controller.configuration.vidinfraBranding)
+                if (controller.configuration.controls.branding)
                   VidinfraIcons.tenbyte(),
               ],
             ],
@@ -97,7 +115,8 @@ class BottomControlsOverlay extends StatelessWidget {
     );
   }
 
-  Widget _muteIcon(VidinfraPlayerController controller) {
+  Widget? _muteIcon(VidinfraPlayerController controller) {
+    if (!controller.configuration.controls.mute) return null;
     return Selector<VidinfraPlayerController, bool>(
       selector: (_, controller) => controller.isMuted,
       child: VidinfraIcons.volumeNone(key: const ValueKey(false)),
@@ -135,10 +154,12 @@ class BottomControlsOverlay extends StatelessWidget {
     );
   }
 
-  Widget _progressTextBuilder(
+  Widget? _progressTextBuilder(
     BuildContext context,
+    VidinfraPlayerController controller,
     ValueNotifier<Duration> value,
   ) {
+    if (!controller.configuration.controls.currentTime) return null;
     return ValueListenableBuilder(
       valueListenable: value,
       builder: (_, value, _) => Text(
@@ -155,25 +176,5 @@ class BottomControlsOverlay extends StatelessWidget {
     VidinfraPlayerController controller,
   ) {
     return null; // TODO
-    return TextButton(
-      style: TextButton.styleFrom(
-        textStyle: TextTheme.of(context).bodySmall,
-        padding: const EdgeInsets.symmetric(vertical: 4),
-        minimumSize: Size.zero,
-        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        iconAlignment: IconAlignment.end,
-      ),
-      onPressed: () {},
-      child: Row(
-        spacing: 4,
-        children: [
-          const Text(
-            "\u2022   Chapters",
-            style: TextStyle(color: Colors.white),
-          ),
-          VidinfraIcons.forward(size: 16),
-        ],
-      ),
-    );
   }
 }

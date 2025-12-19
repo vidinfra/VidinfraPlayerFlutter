@@ -9,7 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:video_preview_thumbnails/video_preview_thumbnails.dart';
 import 'package:vidinfra_player/authentication/aes_auth.dart';
 
-import 'models.dart';
+import '../data/models/media.dart';
 
 typedef DownloadEventListener = k.DownloadEventListener;
 typedef DownloadStatus = k.DownloadStatus;
@@ -83,8 +83,6 @@ class VidinfraDownloader with AESAuthMixin implements DownloadEventListener {
   Future<List<String>> getAllDownloadIds() => _downloader.getAllDownloads();
 
   Future<k.DownloadData?> getDownloadStatus(String id) {
-    final data = k.DownloadData();
-
     return _downloader.getStatusFor(id);
   }
 

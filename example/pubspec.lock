@@ -143,10 +143,10 @@ packages:
     dependency: transitive
     description:
       name: kvideo
-      sha256: "724d9ff352d2153de98ff3d51b949c6ed9afb311a402f71c261b80a3ff110bdf"
+      sha256: "8b973d315cd7c511c251e7ccc7d912a1ab137cec609ff001c1f1dbd0aeb86c96"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.1"
+    version: "0.0.2"
   leak_tracker:
     dependency: transitive
     description:
@@ -446,7 +446,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.0.1"
+    version: "0.0.4"
   vm_service:
     dependency: transitive
     description:

@@ -7,7 +7,7 @@ mixin UiControllerMixin {
 
   k.PlayerState get kState;
 
-  VidinfraConfiguration get configuration;
+  Configuration get configuration;
 
   ValueNotifier<Media?> get _nowPlaying;
 

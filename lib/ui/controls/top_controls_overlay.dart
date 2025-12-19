@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:vidinfra_player/controller/models.dart';
 import 'package:vidinfra_player/controller/vidinfra_player_controller.dart';
 import 'package:vidinfra_player/ui/components/assets.dart';
+
+import '../../data/models/media.dart';
 
 typedef _State = ({Media? nowPlaying, bool inFullscreen});
 
