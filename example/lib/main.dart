@@ -41,7 +41,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> implements DownloadEventListener {
-  final controller = VidinfraPlayerController();
+  final config = Configuration();
+  late final controller = VidinfraPlayerController(configuration: config);
   late final downloader = VidinfraDownloader();
 
   String url =
