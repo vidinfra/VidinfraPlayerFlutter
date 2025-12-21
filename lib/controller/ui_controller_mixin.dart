@@ -17,6 +17,7 @@ mixin UiControllerMixin {
 
   /// Must be Called -----------------------------------------------------------
 
+  @visibleForOverriding
   Future<void> initializeUiControllerMixin() async {
     VolumeController.instance.showSystemUI = false;
     VolumeController.instance.isMuted().then((value) => _isMuted = value);
@@ -24,6 +25,7 @@ mixin UiControllerMixin {
     _nowPlaying.addListener(_prepareThumbnailPreviews);
   }
 
+  @visibleForOverriding
   void disposeUiControllerMixin() {
     VolumeController.instance.removeListener();
     _nowPlaying.removeListener(_prepareThumbnailPreviews);
@@ -107,9 +109,10 @@ mixin UiControllerMixin {
     notifyListeners();
   }
 
+  /// The volume value should be a double between 0.0 (minimum volume) and 1.0 (maximum volume).
   void setVolume(double value) {
     _volume = value;
-    VolumeController.instance.setVolume(_volume);
+    VolumeController.instance.setVolume(_volume.clamp(0.0, 1.0));
     notifyListeners();
   }
 

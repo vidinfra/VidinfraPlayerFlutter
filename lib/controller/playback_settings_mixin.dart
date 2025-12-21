@@ -15,11 +15,13 @@ mixin PlaybackSettingsMixin {
 
   /// Must be Called -----------------------------------------------------------
 
+  @visibleForOverriding
   Future<void> initializePlaybackSettingsMixin() async {
     kState.tracks.addListener(_prepareTracks);
     _nowPlaying.addListener(_reApplySelections);
   }
 
+  @visibleForOverriding
   void disposePlaybackSettingsMixin() {
     kState.tracks.removeListener(_prepareTracks);
     _nowPlaying.removeListener(_reApplySelections);
