@@ -10,10 +10,6 @@ class SegmentedSeekBar extends StatefulWidget {
   final double thumbRadius;
   final double gap;
 
-  final Color activeColor;
-  final Color bufferColor;
-  final Color inactiveColor;
-
   final ValueChanged<double>? onChangeStart;
   final ValueChanged<double>? onChanged;
   final ValueChanged<double>? onChangeEnd;
@@ -32,10 +28,6 @@ class SegmentedSeekBar extends StatefulWidget {
     this.barRadius = 2,
     this.thumbRadius = 7,
     this.gap = 3,
-
-    this.activeColor = const Color(0xFF00FFDD),
-    this.bufferColor = const Color(0x99FFFFFF),
-    this.inactiveColor = const Color(0x66FFFFFF),
   });
 
   @override
@@ -85,8 +77,9 @@ class _SegmentedSeekBarState extends State<SegmentedSeekBar> {
 
   @override
   Widget build(BuildContext context) => LayoutBuilder(
-    builder: (_, constraints) {
+    builder: (context, constraints) {
       final width = constraints.maxWidth;
+      final sliderTheme = SliderTheme.of(context);
 
       return GestureDetector(
         behavior: HitTestBehavior.opaque,
@@ -127,9 +120,13 @@ class _SegmentedSeekBarState extends State<SegmentedSeekBar> {
               barHeight: widget.barHeight,
               barRadius: widget.barRadius,
               thumbRadius: widget.thumbRadius,
-              activeColor: widget.activeColor,
-              bufferColor: widget.bufferColor,
-              inactiveColor: widget.inactiveColor,
+              activeColor:
+                  sliderTheme.activeTrackColor ?? const Color(0xFF00FFDD),
+              bufferColor:
+                  sliderTheme.secondaryActiveTrackColor ??
+                  const Color(0x99FFFFFF),
+              inactiveColor:
+                  sliderTheme.inactiveTrackColor ?? const Color(0x66FFFFFF),
             ),
           ),
         ),
