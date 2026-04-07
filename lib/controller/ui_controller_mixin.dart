@@ -129,7 +129,7 @@ mixin UiControllerMixin {
   ui.Image? get spriteImage => _spriteImage;
 
   Future<void> _prepareThumbnailPreviews() async {
-    final sprite = Uri.tryParse(_nowPlaying.value?.spriteVttUrl ?? "");
+    final sprite = Uri.tryParse(_nowPlaying.value?.spriteVttUrl ?? ":");
 
     if (sprite == null) {
       _spriteVtt = null;
