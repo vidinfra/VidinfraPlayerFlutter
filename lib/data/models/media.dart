@@ -28,6 +28,9 @@ class Media {
 
   final String? spriteVttUrl, chaptersVttUrl;
 
+  /// Makes the content not show a seekbar
+  final bool isLiveStream;
+
   Media({
     required this.title,
     this.description,
@@ -40,6 +43,7 @@ class Media {
     // this.imaTagUrl,
     this.spriteVttUrl,
     this.chaptersVttUrl,
+    this.isLiveStream = false,
   });
 }
 

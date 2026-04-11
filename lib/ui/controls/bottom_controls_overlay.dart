@@ -8,6 +8,7 @@ import 'package:vidinfra_player/ui/controls/play_pause_button.dart';
 import 'package:vidinfra_player/ui/settings_menu/settings_menu.dart';
 
 typedef _SelectorState = ({
+  bool isLiveStream,
   bool inFullScreen,
   double? progress,
   double buffer,
@@ -22,6 +23,7 @@ class BottomControlsOverlay extends StatelessWidget {
 
     return Selector<VidinfraPlayerController, _SelectorState>(
       selector: (_, controller) => (
+        isLiveStream: controller.nowPlaying?.isLiveStream == true,
         inFullScreen: controller.inFullScreen,
         progress: controller.progress,
         buffer: controller.buffer,
@@ -31,7 +33,7 @@ class BottomControlsOverlay extends StatelessWidget {
         spacing: state.inFullScreen ? 16 : 10,
         children: [
           /// Progress Indicator / SeekBar
-          if (state.progress != null) ...{
+          if (state.progress != null && !state.isLiveStream) ...{
             if (state.inFullScreen) ...{
               Row(
                 spacing: 12,
@@ -60,6 +62,8 @@ class BottomControlsOverlay extends StatelessWidget {
           Row(
             spacing: 12,
             children: [
+              if (state.isLiveStream) _liveIndicator(context),
+
               if (controller.configuration.controls.playPause)
                 const PlayPauseButton(showWhileLoading: true),
 
@@ -111,6 +115,31 @@ class BottomControlsOverlay extends StatelessWidget {
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _liveIndicator(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(6),
+        color: Colors.white24,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 6,vertical: 3),
+        child: Row(
+          spacing: 4,
+          children: [
+            const DecoratedBox(
+              decoration: ShapeDecoration(
+                shape: CircleBorder(),
+                color: Color(0xFFEE382B),
+              ),
+              child: SizedBox.square(dimension: 8),
+            ),
+            Text("Live", style: TextTheme.of(context).labelSmall),
+          ],
+        ),
       ),
     );
   }
