@@ -1,6 +1,6 @@
 name: vidinfra_player
 description: "Vidinfra Player SDK For Flutter. At Vidinfra we simplify complex video infrastructure processes, enabling the creation of fast, reliable, and scalable custom video experiences through our straightforward and transparent API."
-version: 0.0.5
+version: 0.0.6
 homepage: https://www.tenbyte.io
 repository: https://github.com/vidinfra/VidinfraPlayerFlutter
 issue_tracker: https://github.com/vidinfra/VidinfraPlayerFlutter/issues
@@ -13,7 +13,8 @@ dependencies:
   flutter:
     sdk: flutter
 
-  kvideo: ^0.0.2
+  kvideo: ^0.0.15
+  android_pip: ^2.0.2
 
   provider: ^6.1.5+1
   crypto: ^3.0.7

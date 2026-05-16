@@ -89,10 +89,7 @@ class BottomControlsOverlay extends StatelessWidget {
 
               if (controller.configuration.controls.pictureInPicture)
                 IconButton(
-                  onPressed: () {
-                    if (state.inFullScreen) controller.exitFullScreen();
-                    controller.kController.enterPiPMode();
-                  },
+                  onPressed: controller.enterPiPMode,
                   icon: VidinfraIcons.pip(),
                 ),
 
@@ -126,7 +123,7 @@ class BottomControlsOverlay extends StatelessWidget {
         color: Colors.white24,
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 6,vertical: 3),
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
         child: Row(
           spacing: 4,
           children: [

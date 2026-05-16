@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kvideo/gen/pigeon.g.dart' as k;
 import 'package:kvideo/kvideo.dart';
 import 'package:provider/provider.dart';
 import 'package:vidinfra_player/controller/vidinfra_player_controller.dart';
@@ -55,7 +56,7 @@ class VidinfraPlayerView extends StatelessWidget {
                 child: ValueListenableBuilder(
                   valueListenable: controller.kState.pipMode,
                   builder: (_, pip, child) {
-                    if (!pip) return const SizedBox.shrink();
+                    if (pip != k.PiPMode.active) return const SizedBox.shrink();
                     return ColoredBox(
                       color: Colors.black,
                       child: Column(

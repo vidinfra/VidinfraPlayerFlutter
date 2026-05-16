@@ -92,6 +92,20 @@ mixin UiControllerMixin {
     notifyListeners();
   }
 
+  void enterPiPMode() {
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      AndroidPIP().enterPipMode();
+      controlsVisible.value = false;
+      return;
+    }
+
+    kController.enterPiPMode();
+  }
+
+  void setAndroidAutoPiP(bool value) {
+    AndroidPIP().setAutoPipMode(autoEnter: value);
+  }
+
   /// Volume Controls ----------------------------------------------------------
 
   double _volume = 0.0;
